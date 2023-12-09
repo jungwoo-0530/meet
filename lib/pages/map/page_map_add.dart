@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ya_meet/common/constants.dart';
 import 'package:ya_meet/custom/sub_appbar.dart';
 
@@ -27,7 +26,13 @@ class _AddMapPageState extends State<AddMapPage> {
         title: "Map Add",
       ),
       body: SafeArea(
-        child: _isLoading ? const Center(child: CircularProgressIndicator()) : Text("Add"),
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: EdgeInsets.all(Consts.marginPage),
+              ),
       ),
     );
   }

@@ -62,7 +62,7 @@ class _MeetAppBarState extends State<MeetAppBar> {
           automaticallyImplyLeading: false, //widget.hideBackIcon ? false : true,
           toolbarHeight: 100.h,
           elevation: 2,
-          titleSpacing: Consts.marginPageHorizon,
+          titleSpacing: Consts.marginPage,
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -102,7 +102,7 @@ class _MeetAppBarState extends State<MeetAppBar> {
     }
 
     actions.add(SizedBox(
-      width: Consts.marginPageHorizon,
+      width: Consts.marginPage,
     ));
 
     return actions;

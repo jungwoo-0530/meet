@@ -36,7 +36,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: EdgeInsets.all(Consts.marginPageHorizon),
+                padding: EdgeInsets.all(Consts.marginPage),
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(target: LatLng(latitude, longitude), zoom: 17),
                 ),

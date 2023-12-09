@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:ya_meet/pages/main/page_home.dart';
 import 'package:ya_meet/pages/main/page_map.dart';
+import 'package:ya_meet/pages/map/page_map_add.dart';
 import 'package:ya_meet/pages/map/page_map_detail.dart';
 import 'package:ya_meet/pages/page_splash.dart';
 
@@ -169,6 +170,9 @@ class YaMeet extends StatelessWidget {
               ROUTES.MAP_DETAIL: (context) {
                 return const DetailMapPage();
               },
+              ROUTES.MAP_ADD: (context) {
+                return const AddMapPage();
+              },
             },
             onGenerateRoute: (settings) {},
             theme: ThemeData(
@@ -276,12 +280,45 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
     meetlog("didChangeAppLifecycleState: $state");
   }
 
+  Widget meetFab(int currentIdx) {
+    return Builder(
+      builder: (context) {
+        switch (currentIdx) {
+          case 1:
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, ROUTES.MAP_ADD);
+              },
+              child: Container(
+                width: 100.w,
+                height: 100.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(80.w),
+                  boxShadow: [
+                    BoxShadow(color: const Color(0x26000000), spreadRadius: 0, blurRadius: 20.r),
+                  ],
+                ),
+                child: Icon(
+                  Icons.add,
+                  size: 80.w,
+                  color: Colors.blue,
+                ),
+              ),
+            );
+          default:
+            return const SizedBox();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double labelBottomPadding = 10.h;
 
     return Scaffold(
-      // key: Meet.mainStateKey,
+      key: Meet.mainStateKey,
       backgroundColor: scaffoldBackgroundColor,
       appBar: PreferredSize(preferredSize: Size.fromHeight(100.h), child: appbarSelector(tabController.index)),
       body: SafeArea(
@@ -292,6 +329,7 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
           children: screenList,
         ),
       ),
+      floatingActionButton: meetFab(Meet.tabbarSelectedIndex),
       extendBody: true,
       drawerEnableOpenDragGesture: false,
       bottomNavigationBar: Container(

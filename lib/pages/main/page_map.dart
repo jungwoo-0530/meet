@@ -16,7 +16,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Padding(
-      padding: EdgeInsets.all(Consts.marginPageHorizon),
+      padding: EdgeInsets.all(Consts.marginPage),
       child: ListView(
         children: [
           for (int i = 0; i < 10; i++) ...[

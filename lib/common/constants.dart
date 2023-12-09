@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class Consts {
   static double get designWidth => 720.0;
   static double get designHeight => 1560.0;
-  static double get marginPageHorizon => 36.w;
+  static double get marginPage => 36.w;
 
   static double get tabbarLabelPadding => 2;
   static double get heightTabbar => 65;
