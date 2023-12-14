@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../common/api.dart';
 import '../../common/common.dart';
 import '../../common/constants.dart';
+import '../../common/routes.dart';
 import '../../common/urls.dart';
 import '../map/do.dart';
 
@@ -25,7 +26,7 @@ class _MapPageState extends State<MapPage> {
           for (int i = 0; i < 10; i++) ...[
             InkWell(
               onTap: () {
-                API.callNaverApi(
+/*                API.callNaverApi(
                   URLS.naverGeoCoding,
                   parameters: {'query': '양평로21'},
                   onSuccess: (successData) {
@@ -43,9 +44,9 @@ class _MapPageState extends State<MapPage> {
                       }
                     }
                   },
-                );
+                );*/
 
-                // Navigator.pushNamed(context, ROUTES.MAP_DETAIL);
+                Navigator.pushNamed(context, ROUTES.MAP_DETAIL);
               },
               child: Container(
                 height: 100.h,

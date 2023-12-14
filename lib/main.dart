@@ -170,8 +170,7 @@ class YaMeet extends StatelessWidget {
                 return const SplashPage();
               },
               ROUTES.MAIN: (context) {
-                /*return const AppMain(title: "아~ 어디야");*/
-                return const AppMain(title: "~~~~");
+                return const AppMain(title: "Main");
               },
               ROUTES.HOME: (context) {
                 return const HomePage();
