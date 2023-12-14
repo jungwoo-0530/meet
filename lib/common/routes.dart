@@ -7,4 +7,5 @@ class ROUTES {
   //맵
   static String get MAP_DETAIL => '/map/detail';
   static String get MAP_ADD => '/map/add';
+  static String get MAP_SEARCH => '/map/search';
 }

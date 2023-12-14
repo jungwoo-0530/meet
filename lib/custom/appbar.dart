@@ -73,7 +73,7 @@ class _MeetAppBarState extends State<MeetAppBar> {
                         onTap: () {
                           meetlog("로고 텍스트 터치2");
                         },
-                        child: Text("아~ 어디야",
+                        child: Text("Main",
                             style: TextStyle(
                               color: const Color(0xFF222222),
                               fontSize: 34.sp,

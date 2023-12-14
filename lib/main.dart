@@ -4,14 +4,18 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:ya_meet/pages/main/page_home.dart';
 import 'package:ya_meet/pages/main/page_map.dart';
-import 'package:ya_meet/pages/map/page_map_add.dart';
+import 'package:ya_meet/pages/map/page_map_edit.dart';
 import 'package:ya_meet/pages/map/page_map_detail.dart';
 import 'package:ya_meet/pages/page_splash.dart';
+import 'package:ya_meet/popup/pop_searchAddress.dart';
 
 import 'common/common.dart';
 import 'common/constants.dart';
@@ -20,9 +24,16 @@ import 'common/routes.dart';
 import 'custom/appbar.dart';
 
 Future<void> main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "assets/config/.env");
 
   await ScreenUtil.ensureScreenSize();
+
+  await NaverMapSdk.instance.initialize(
+      clientId: dotenv.env['naver_map_client_id']!,
+      onAuthFailed: (ex) {
+        meetlog(ex.toString());
+      });
 
   await Meet.ready();
 
@@ -159,7 +170,8 @@ class YaMeet extends StatelessWidget {
                 return const SplashPage();
               },
               ROUTES.MAIN: (context) {
-                return const AppMain(title: "아~ 어디야");
+                /*return const AppMain(title: "아~ 어디야");*/
+                return const AppMain(title: "~~~~");
               },
               ROUTES.HOME: (context) {
                 return const HomePage();
@@ -171,10 +183,19 @@ class YaMeet extends StatelessWidget {
                 return const DetailMapPage();
               },
               ROUTES.MAP_ADD: (context) {
-                return const AddMapPage();
+                return const EditMapPage();
               },
             },
-            onGenerateRoute: (settings) {},
+            onGenerateRoute: (settings) {
+              if (settings.name == ROUTES.MAP_SEARCH) {
+                return PageTransition(
+                  child: SearchAddressPopup(arguments: settings.arguments as Map<String, dynamic>?),
+                  type: PageTransitionType.scale,
+                  alignment: Alignment.center,
+                  settings: settings,
+                );
+              }
+            },
             theme: ThemeData(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
@@ -231,6 +252,9 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+
+    Meet.permissionLocationRequest();
+
     super.initState();
 
     tabController = TabController(length: 2, vsync: this, animationDuration: const Duration(milliseconds: 0));
@@ -286,7 +310,30 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
         switch (currentIdx) {
           case 1:
             return InkWell(
-              onTap: () {
+              onTap: () async {
+                // Navigator.pushNamed(context, ROUTES.MAP_SEARCH);
+                // await Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) => KpostalView(
+                //       useLocalServer: true,
+                //       localPort: 1024,
+                //       // kakaoKey: '{Add your KAKAO DEVELOPERS JS KEY}',
+                //       callback: (Kpostal result) {
+                //         setState(() {
+                //           // this.postCode = result.postCode;
+                //           // this.address = result.address;
+                //           // this.latitude = result.latitude.toString();
+                //           // this.longitude = result.longitude.toString();
+                //           // this.kakaoLatitude = result.kakaoLatitude.toString();
+                //           // this.kakaoLongitude = result.kakaoLongitude.toString();
+                //         });
+                //
+                //         Navigator.pushNamed(context, ROUTES.MAP_ADD);
+                //       },
+                //     ),
+                //   ),
+                // );
                 Navigator.pushNamed(context, ROUTES.MAP_ADD);
               },
               child: Container(

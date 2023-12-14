@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../common/api.dart';
+import '../../common/common.dart';
 import '../../common/constants.dart';
-import '../../common/routes.dart';
+import '../../common/urls.dart';
+import '../map/do.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -22,7 +25,27 @@ class _MapPageState extends State<MapPage> {
           for (int i = 0; i < 10; i++) ...[
             InkWell(
               onTap: () {
-                Navigator.pushNamed(context, ROUTES.MAP_DETAIL);
+                API.callNaverApi(
+                  URLS.naverGeoCoding,
+                  parameters: {'query': '양평로21'},
+                  onSuccess: (successData) {
+                    if (successData['status'] == 'OK') {
+                      if (successData['meta']['count'] > 0) {
+                        List<Address> addressList = [];
+                        for (int i = 0; i < successData['meta']['count']; i++) {
+                          addressList.add(Address.fromJson(successData['addresses'][i]));
+                        }
+                        for (var element in addressList) {
+                          meetlog(element.roadAddress);
+                        }
+                      } else {
+                        meetlog("주소 검색 결과가 없습니다.");
+                      }
+                    }
+                  },
+                );
+
+                // Navigator.pushNamed(context, ROUTES.MAP_DETAIL);
               },
               child: Container(
                 height: 100.h,
