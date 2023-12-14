@@ -10,6 +10,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:ya_meet/pages/main/page_chat.dart';
 import 'package:ya_meet/pages/main/page_home.dart';
 import 'package:ya_meet/pages/main/page_map.dart';
 import 'package:ya_meet/pages/map/page_map_edit.dart';
@@ -244,6 +245,7 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
   List<Widget> screenList = [
     const HomePage(),
     const MapPage(),
+    const ChatPage(),
   ];
 
   Color scaffoldBackgroundColor = const Color(0xFFF7F7F7); // Colors.white;
@@ -256,7 +258,7 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
 
     super.initState();
 
-    tabController = TabController(length: 2, vsync: this, animationDuration: const Duration(milliseconds: 0));
+    tabController = TabController(length: 3, vsync: this, animationDuration: const Duration(milliseconds: 0));
   }
 
   @override
@@ -279,6 +281,10 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
         // 홈
         case 1:
           scaffoldBackgroundColor = const Color(0xFFF7F7F7);
+          break;
+        // 채팅
+        case 2:
+          scaffoldBackgroundColor = Colors.white;
           break;
       }
     });
@@ -410,6 +416,10 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
                   BottomNavigationBarItem(
                     label: '지도',
                     icon: Icon(Icons.map_outlined, size: 44.w, color: const Color(0xff666666)),
+                  ),
+                  BottomNavigationBarItem(
+                    label: '채팅',
+                    icon: Icon(Icons.chat, size: 44.w, color: const Color(0xff666666)),
                   ),
                 ],
                 currentIndex: Meet.tabbarSelectedIndex,
