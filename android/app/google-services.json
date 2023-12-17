@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280023587213",
+    "project_id": "meet-20ae7",
+    "storage_bucket": "meet-20ae7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280023587213:android:59db25be5b48ddf7cd45c4",
+        "android_client_info": {
+          "package_name": "com.example.ya_meet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3-6XSFljODloKmfpaLUAxM_aLst6LO0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

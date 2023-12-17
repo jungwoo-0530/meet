@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ya_meet/common/userinfo.dart';
 
 import '../main.dart';
 import 'constants.dart';
@@ -25,6 +26,8 @@ class Meet {
   static AppLifecycleState appState = AppLifecycleState.resumed;
 
   static int tabbarSelectedIndex = 0;
+
+  static final UserInfo user = UserInfo();
 
   factory Meet() {
     return _instance;

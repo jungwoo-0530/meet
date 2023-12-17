@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,11 +11,14 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:ya_meet/pages/chat/page_chat_edit.dart';
 import 'package:ya_meet/pages/main/page_chat.dart';
 import 'package:ya_meet/pages/main/page_home.dart';
 import 'package:ya_meet/pages/main/page_map.dart';
 import 'package:ya_meet/pages/map/page_map_edit.dart';
 import 'package:ya_meet/pages/map/page_map_detail.dart';
+import 'package:ya_meet/pages/member/page_join.dart';
+import 'package:ya_meet/pages/member/page_login.dart';
 import 'package:ya_meet/pages/page_splash.dart';
 import 'package:ya_meet/popup/pop_searchAddress.dart';
 
@@ -23,9 +27,15 @@ import 'common/constants.dart';
 import 'common/meet.dart';
 import 'common/routes.dart';
 import 'custom/appbar.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await dotenv.load(fileName: "assets/config/.env");
 
   await ScreenUtil.ensureScreenSize();
@@ -171,7 +181,13 @@ class YaMeet extends StatelessWidget {
                 return const SplashPage();
               },
               ROUTES.MAIN: (context) {
-                return const AppMain(title: "Main");
+                return AppMain(title: Consts.appTitle);
+              },
+              ROUTES.LOGIN: (context) {
+                return const LoginPage();
+              },
+              ROUTES.JOIN: (context) {
+                return const JoinPage();
               },
               ROUTES.HOME: (context) {
                 return const HomePage();
@@ -184,6 +200,9 @@ class YaMeet extends StatelessWidget {
               },
               ROUTES.MAP_ADD: (context) {
                 return const EditMapPage();
+              },
+              ROUTES.CHAT_EDIT: (context) {
+                return const EditChatPage();
               },
             },
             onGenerateRoute: (settings) {
