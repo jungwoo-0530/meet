@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../common/constants.dart';
+import '../../common/routes.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -25,7 +26,9 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             for (int i = 0; i < 10; i++) ...[
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, ROUTES.CHAT_EDIT);
+                },
                 //TODO : hover 효과 넣기
                 child: Container(
                   height: 150.h,

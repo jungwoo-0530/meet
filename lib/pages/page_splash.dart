@@ -42,7 +42,9 @@ class _SplashPageState extends State<SplashPage> {
         splashTransition: SplashTransition.fadeTransition,
         pageTransitionType: PageTransitionType.fade,
         screenRouteFunction: () async {
-          return ROUTES.MAIN;
+          //TODO : 로그인 확인.
+          return ROUTES.LOGIN;
+          // return ROUTES.MAIN;
         });
   }
 }
