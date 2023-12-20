@@ -26,10 +26,11 @@ class Consts {
       );
 
   static String get prefPermissionsInfoConfirm => 'permissions_info_confirm';
-  static String get prefAccessToken => 'access_token';
   static String get prefLogined => 'logined';
   static String get prefNickname => 'nickname';
-  static String get prefProfileImage => 'profile_image';
+  static String get prefLoginId => 'loginId';
+  static String get prefEmail => 'email';
+  static String get prefTelephone => 'telephone';
   static String get prefUserSeq => 'user_seq';
 
   // 각종 메시지

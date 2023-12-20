@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../common/constants.dart';
+import '../../common/meet.dart';
 import '../../common/routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,6 +36,16 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: const Text("회원가입"),
               ),
+              SizedBox(
+                height: 30.h,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Meet.user.setLogout();
+                  Navigator.pushNamed(context, ROUTES.LOGIN);
+                },
+                child: const Text("로그아웃"),
+              )
             ],
           ),
         ),

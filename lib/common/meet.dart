@@ -36,7 +36,9 @@ class Meet {
   static void init() {}
 
   /// 앱 실행을 위한 기본 작업들을 처리한다.
-  static ready() {}
+  static ready() {
+    Meet.user.loadLoginInfo();
+  }
 
   static Future<bool> alert(BuildContext context, String title, String message) async {
     bool result = false;

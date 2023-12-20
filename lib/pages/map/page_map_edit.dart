@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
+// import 'package:flutter_naver_mtter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ya_meet/common/constants.dart';
 import 'package:ya_meet/custom/meet_button.dart';
 import 'package:ya_meet/custom/sub_appbar.dart';
 
 import '../../common/api.dart';
 import '../../common/common.dart';
+import '../../common/meet.dart';
 import '../../common/routes.dart';
 import '../../common/urls.dart';
 
@@ -21,15 +23,15 @@ class EditMapPage extends StatefulWidget {
 class _EditMapPageState extends State<EditMapPage> {
   bool _isLoading = true;
 
-  final TextEditingController phoneEditingController = TextEditingController();
+  final TextEditingController otherLoginIdEditingController = TextEditingController();
   final TextEditingController joinAddressEditingController = TextEditingController();
 
   String phoneNumber = "";
-  String joinAddress = "";
-  late NLatLng joinLatLng;
+  String destinationAddress = "";
+  late LatLng destinationLatLng;
 
   String myAddress = "";
-  late NLatLng myLatLng;
+  late LatLng myLatLng;
 
   @override
   void initState() {
@@ -59,18 +61,46 @@ class _EditMapPageState extends State<EditMapPage> {
                     Expanded(
                       child: ListView(
                         children: [
-                          Text(
-                            "내 위치",
-                            style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w700),
+                          Row(
+                            children: [
+                              Text(
+                                "내 위치",
+                                style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  // 현재 위치 좌표, 주소 가져오기
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  getLocationData().then((value) {
+                                    apiAddress().then((value) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    });
+                                    // setState(() {});
+                                  });
+                                },
+                                child: const Icon(Icons.location_searching),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 16.h,
+                          ),
+                          Text(
+                            myAddress,
+                            style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w400),
                           ),
                           SizedBox(
                             height: 30.h,
                           ),
                           Text(
-                            "상대방 핸드폰 번호",
+                            "상대방 아이디",
                             style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w700),
                           ),
                           SizedBox(
@@ -88,11 +118,11 @@ class _EditMapPageState extends State<EditMapPage> {
                               ),
                             ),
                             child: TextField(
-                              controller: phoneEditingController,
+                              controller: otherLoginIdEditingController,
                               autofocus: false,
                               canRequestFocus: true,
                               enabled: true,
-                              keyboardType: TextInputType.phone,
+                              keyboardType: TextInputType.name,
                               maxLength: 20,
                               style: TextStyle(
                                 color: const Color(0xff222222),
@@ -102,7 +132,7 @@ class _EditMapPageState extends State<EditMapPage> {
                               ),
                               textAlignVertical: TextAlignVertical.center,
                               decoration: InputDecoration(
-                                hintText: "상대방 핸드폰 번호를 입력해주세요.",
+                                hintText: "상대방 아이디를 입력해주세요.",
                                 border: InputBorder.none,
                                 disabledBorder: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -140,9 +170,9 @@ class _EditMapPageState extends State<EditMapPage> {
                                 if (result != null) {
                                   Map<String, dynamic> returnData = result as Map<String, dynamic>;
                                   setState(() {
-                                    joinAddress = returnData['address']!;
+                                    destinationAddress = returnData['address']!;
                                     joinAddressEditingController.text = returnData['address']!;
-                                    joinLatLng = returnData['NLatLng']!;
+                                    destinationLatLng = returnData['LatLng']!;
                                   });
                                 }
                               });
@@ -189,7 +219,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                 ),
                                 onChanged: (value) {
                                   setState(() {
-                                    joinAddress = value;
+                                    destinationAddress = value;
                                   });
                                 },
                                 onSubmitted: (value) {},
@@ -202,10 +232,11 @@ class _EditMapPageState extends State<EditMapPage> {
                     MeetButton(
                       radius: 32.r,
                       title: "등록",
-                      enabled: joinAddress.isNotEmpty && phoneNumber.isNotEmpty,
+                      enabled: destinationAddress.isNotEmpty,
                       onPressed: () {
                         //TODO: 등록 API 호출
-                        Navigator.pop(context);
+                        apiAddMap();
+                        // Navigator.pop(context);
                       },
                     ),
                   ],
@@ -216,24 +247,47 @@ class _EditMapPageState extends State<EditMapPage> {
   }
 
   Future<void> apiAddress() async {
-    await API.callNaverApi(
-      URLS.naverReverseGeoCoding,
-      parameters: {'coords': '${myLatLng.longitude},${myLatLng.latitude}', 'output': "json"},
-      onSuccess: (successData) {
-        if (successData['status'] == 'OK') {
-          meetlog(successData['results'][0]['region']['area1']['name']);
+    await API.callGoogleApi(URLS.googleReverseGeoCoding, parameters: {
+      'latlng': '${myLatLng.latitude},${myLatLng.longitude}',
+    }, onSuccess: (successData) {
+      String status = successData['status'];
+      if (status == 'OK') {
+        if (successData['results'].length > 0) {
+          String address = successData['results'][0]['formatted_address'];
+          myAddress = address.replaceAll("대한민국 ", "");
         }
-        setState(() {});
-      },
-    );
+      } else if (status == "ZERO_RESULTS") {
+        myAddress = "주소를 찾을 수 없습니다.";
+      } else {
+        myAddress = "서버 에러...";
+      }
+      setState(() {});
+    });
   }
 
   Future<void> getLocationData() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // Location location = Location();
-    // await location.getCurrentLocation();
-    // meetlog(location.latitude);
-    // meetlog(location.longitude);
-    meetlog(position.toString());
+
+    myLatLng = LatLng(position.latitude, position.longitude);
+    meetlog(position.latitude.toString());
+    meetlog(position.longitude.toString());
+  }
+
+  Future<void> apiAddMap() async {
+    await API.callWithAction(
+      URLS.mapAdd,
+      parameters: {
+        'myLoginId': Meet.user.loginId,
+        'otherLoginId': otherLoginIdEditingController.text,
+        'ownerLatitude': myLatLng.latitude.toString(),
+        'ownerLongitude': myLatLng.longitude.toString(),
+        'ownerAddress': myAddress,
+        'destinationLatitude': destinationLatLng.latitude.toString(),
+        'destinationLongitude': destinationLatLng.longitude.toString(),
+        'destinationAddress': destinationAddress,
+      },
+      onSuccess: (successData) {},
+      onFail: (errorData) {},
+    );
   }
 }

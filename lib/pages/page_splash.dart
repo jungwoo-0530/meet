@@ -2,6 +2,8 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ya_meet/common/common.dart';
 
 import '../common/constants.dart';
 import '../common/meet.dart';
@@ -42,9 +44,13 @@ class _SplashPageState extends State<SplashPage> {
         splashTransition: SplashTransition.fadeTransition,
         pageTransitionType: PageTransitionType.fade,
         screenRouteFunction: () async {
-          //TODO : 로그인 확인.
-          return ROUTES.LOGIN;
-          // return ROUTES.MAIN;
+          if (Meet.user.logined) {
+            meetlog("로그인 상태");
+            return ROUTES.MAIN;
+          } else {
+            meetlog("비로그인 상태");
+            return ROUTES.LOGIN;
+          }
         });
   }
 }

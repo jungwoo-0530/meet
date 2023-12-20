@@ -7,64 +7,64 @@ import 'meet.dart';
 class UserInfo {
   bool _logined = false;
 
+  String loginId = "";
   String nickName = "";
-  String accessToken = "";
-  String profileImage = "";
-
+  String email = "";
+  String telephone = "";
   int userSeq = -1;
+
+  bool get logined => _logined && userSeq != -1;
 
   void init() {
     _logined = false;
 
+    loginId = "";
     nickName = "";
-    accessToken = "";
-    profileImage = "";
-
+    email = "";
+    telephone = "";
     userSeq = -1;
   }
 
-  Future<void> setLoginInfo(
-      {required bool isLogined,
-      required String nickName,
-      required String accessToken,
-      required String email,
-      required bool isDoctor,
-      String userStats = "U",
-      required int userSeq,
-      required String snsGB,
-      required String snsID,
-      required String profileImage}) async {
+  Future<void> setLoginInfo({
+    required bool isLogined,
+    required String loginId,
+    required String nickName,
+    required String email,
+    required String telephone,
+    required int userSeq,
+  }) async {
     _logined = isLogined;
 
     Meet.user.nickName = nickName;
-    Meet.user.profileImage = profileImage;
-    Meet.user.accessToken = accessToken;
-
+    Meet.user.loginId = loginId;
     Meet.user.userSeq = userSeq;
+    Meet.user.email = email;
+    Meet.user.telephone = telephone;
 
-    meetlog("로그인 정보 accesstoken setting : $accessToken");
-    meetlog("로그인 정보 accesstoken userStats : $userStats");
+    meetlog("로그인 정보 userSeq : $userSeq");
     saveLoginInfo();
   }
 
   void saveLoginInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(Consts.prefAccessToken, Meet.user.accessToken);
     await prefs.setBool(Consts.prefLogined, Meet.user._logined);
     await prefs.setString(Consts.prefNickname, Meet.user.nickName);
-    await prefs.setString(Consts.prefProfileImage, Meet.user.profileImage);
+    await prefs.setString(Consts.prefLoginId, Meet.user.loginId);
+    await prefs.setString(Consts.prefEmail, Meet.user.email);
+    await prefs.setString(Consts.prefTelephone, Meet.user.telephone);
     await prefs.setInt(Consts.prefUserSeq, Meet.user.userSeq);
   }
 
   void loadLoginInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Meet.user.accessToken = prefs.getString(Consts.prefAccessToken) ?? "";
     Meet.user._logined = prefs.getBool(Consts.prefLogined) ?? false;
     Meet.user.nickName = prefs.getString(Consts.prefNickname) ?? "";
-    Meet.user.profileImage = prefs.getString(Consts.prefProfileImage) ?? "";
+    Meet.user.loginId = prefs.getString(Consts.prefLoginId) ?? "";
+    Meet.user.email = prefs.getString(Consts.prefEmail) ?? "";
+    Meet.user.telephone = prefs.getString(Consts.prefTelephone) ?? "";
     Meet.user.userSeq = prefs.getInt(Consts.prefUserSeq) ?? -1;
-    meetlog("사용자 정보 로드함 : $_logined / $accessToken");
+    meetlog("사용자 정보 로드함 : $_logined / $nickName / $userSeq");
   }
 
   void setLogout() {

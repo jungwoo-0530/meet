@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ya_meet/pages/map/do.dart';
 
 import '../common/api.dart';
@@ -123,7 +124,7 @@ class _SearchAddressPopupState extends State<SearchAddressPopup> {
                         onTap: () {
                           Map<String, dynamic> returnData = {
                             'address': addressList[index].roadAddress,
-                            'NLatLng': NLatLng(
+                            'LatLng': LatLng(
                                 double.parse(addressList[index].latitude), double.parse(addressList[index].longitude)),
                           };
                           Navigator.pop(context, returnData);
