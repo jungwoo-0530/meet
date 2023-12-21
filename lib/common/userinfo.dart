@@ -64,7 +64,8 @@ class UserInfo {
     Meet.user.email = prefs.getString(Consts.prefEmail) ?? "";
     Meet.user.telephone = prefs.getString(Consts.prefTelephone) ?? "";
     Meet.user.userSeq = prefs.getInt(Consts.prefUserSeq) ?? -1;
-    meetlog("사용자 정보 로드함 : $_logined / $nickName / $userSeq");
+
+    meetlog("사용자 정보 : $userSeq / $nickName");
   }
 
   void setLogout() {

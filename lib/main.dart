@@ -196,7 +196,10 @@ class YaMeet extends StatelessWidget {
                 return const MapPage();
               },
               ROUTES.MAP_DETAIL: (context) {
-                return const DetailMapPage();
+                var arg = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+                return DetailMapPage(
+                  arguments: arg,
+                );
               },
               ROUTES.MAP_ADD: (context) {
                 return const EditMapPage();

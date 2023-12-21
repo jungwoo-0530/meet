@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    API.callWithAction(URLS.login, parameters: {
+                    API.callPostApi(URLS.login, parameters: {
                       "loginId": idEditingController.text,
                       "password": passwordEditingController.text,
                     }, onSuccess: (successData) {

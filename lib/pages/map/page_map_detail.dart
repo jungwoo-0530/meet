@@ -14,7 +14,9 @@ import '../../common/meet.dart';
 import '../../common/urls.dart';
 
 class DetailMapPage extends StatefulWidget {
-  const DetailMapPage({super.key});
+  const DetailMapPage({super.key, required this.arguments});
+
+  final Map<String, dynamic>? arguments;
 
   @override
   State<DetailMapPage> createState() => _DetailMapPageState();

@@ -274,8 +274,8 @@ class _EditMapPageState extends State<EditMapPage> {
   }
 
   Future<void> apiAddMap() async {
-    await API.callWithAction(
-      URLS.mapAdd,
+    await API.callPostApi(
+      URLS.addMap,
       parameters: {
         'myLoginId': Meet.user.loginId,
         'otherLoginId': otherLoginIdEditingController.text,

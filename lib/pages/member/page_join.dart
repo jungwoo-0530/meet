@@ -358,7 +358,7 @@ class _JoinPageState extends State<JoinPage> {
                 MeetButton(
                   title: "등록",
                   onPressed: () {
-                    API.callWithAction(URLS.join, parameters: {
+                    API.callPostApi(URLS.join, parameters: {
                       "loginId": idEditingController.text,
                       "password": passwordEditingController.text,
                       "name": nameEditingController.text,

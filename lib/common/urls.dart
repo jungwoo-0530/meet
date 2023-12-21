@@ -28,5 +28,10 @@ class URLS {
   static String get login => "/api/member/login";
 
   // 맵
-  static String get mapAdd => "/api/map/add";
+  static String get addMap => "/api/map/add";
+  static String get getMapList => "/api/map/list";
+
+  //초대
+  static String get getInviteList => "/api/map/invite/list";
+  static String get acceptInvite => "/api/map/accept";
 }
