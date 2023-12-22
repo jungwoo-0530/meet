@@ -23,8 +23,15 @@ class EditMapPage extends StatefulWidget {
 class _EditMapPageState extends State<EditMapPage> {
   bool _isLoading = true;
 
+  final TextEditingController myAddressEditingController = TextEditingController();
   final TextEditingController otherLoginIdEditingController = TextEditingController();
   final TextEditingController joinAddressEditingController = TextEditingController();
+
+  final TextEditingController headEditingController = TextEditingController();
+  final TextEditingController topEditingController = TextEditingController();
+  final TextEditingController bottomEditingController = TextEditingController();
+  final TextEditingController shoesEditingController = TextEditingController();
+  final TextEditingController etcEditingController = TextEditingController();
 
   String phoneNumber = "";
   String destinationAddress = "";
@@ -82,7 +89,6 @@ class _EditMapPageState extends State<EditMapPage> {
                                         _isLoading = false;
                                       });
                                     });
-                                    // setState(() {});
                                   });
                                 },
                                 child: const Icon(Icons.location_searching),
@@ -92,9 +98,49 @@ class _EditMapPageState extends State<EditMapPage> {
                           SizedBox(
                             height: 16.h,
                           ),
-                          Text(
-                            myAddress,
-                            style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w400),
+                          Container(
+                            height: 90.h,
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                            ),
+                            child: TextField(
+                              controller: myAddressEditingController,
+                              autofocus: false,
+                              canRequestFocus: true,
+                              enabled: false,
+                              keyboardType: TextInputType.name,
+                              maxLength: 20,
+                              style: TextStyle(
+                                color: const Color(0xff222222),
+                                fontSize: 28.sp,
+                                fontWeight: FontWeight.w400,
+                                decorationThickness: 0,
+                              ),
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                hintText: "내 주소를 입력해주세요.",
+                                border: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                counterText: "",
+                                hintStyle: TextStyle(
+                                  color: const Color(0xff999999),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                isCollapsed: true,
+                              ),
+                              onChanged: (value) {},
+                              onSubmitted: (value) {},
+                            ),
                           ),
                           SizedBox(
                             height: 30.h,
@@ -166,15 +212,15 @@ class _EditMapPageState extends State<EditMapPage> {
                           ),
                           InkWell(
                             onTap: () async {
-                              await Navigator.pushNamed(context, ROUTES.MAP_SEARCH).then((result) {
-                                if (result != null) {
-                                  Map<String, dynamic> returnData = result as Map<String, dynamic>;
-                                  setState(() {
-                                    destinationAddress = returnData['address']!;
-                                    joinAddressEditingController.text = returnData['address']!;
-                                    destinationLatLng = returnData['LatLng']!;
-                                  });
-                                }
+                              dynamic result = await Navigator.pushNamed(context, ROUTES.MAP_SEARCH);
+
+                              if (result == null) return;
+
+                              Map<String, dynamic> returnData = result as Map<String, dynamic>;
+                              setState(() {
+                                destinationAddress = returnData['address']!;
+                                joinAddressEditingController.text = returnData['address']!;
+                                destinationLatLng = returnData['LatLng']!;
                               });
                             },
                             child: Container(
@@ -226,6 +272,298 @@ class _EditMapPageState extends State<EditMapPage> {
                               ),
                             ),
                           ),
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          Text(
+                            "나의 인상착의",
+                            style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            children: [
+                              Text("머리"),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: headEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            children: [
+                              Text("상의"),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: topEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            children: [
+                              Text("하의"),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: bottomEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            children: [
+                              Text("신발"),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: shoesEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            children: [
+                              Text("기타"),
+                              SizedBox(
+                                width: 16.w,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: etcEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -234,9 +572,7 @@ class _EditMapPageState extends State<EditMapPage> {
                       title: "등록",
                       enabled: destinationAddress.isNotEmpty,
                       onPressed: () {
-                        //TODO: 등록 API 호출
                         apiAddMap();
-                        // Navigator.pop(context);
                       },
                     ),
                   ],
@@ -255,6 +591,7 @@ class _EditMapPageState extends State<EditMapPage> {
         if (successData['results'].length > 0) {
           String address = successData['results'][0]['formatted_address'];
           myAddress = address.replaceAll("대한민국 ", "");
+          myAddressEditingController.text = address.replaceAll("대한민국 ", "");
         }
       } else if (status == "ZERO_RESULTS") {
         myAddress = "주소를 찾을 수 없습니다.";

@@ -433,15 +433,18 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
                 items: [
                   BottomNavigationBarItem(
                     label: '홈',
-                    icon: Icon(Icons.home_outlined, size: 44.w, color: const Color(0xff666666)),
+                    icon: Icon(Meet.tabbarSelectedIndex == 0 ? Icons.home : Icons.home_outlined,
+                        size: 44.w, color: const Color(0xff666666)),
                   ),
                   BottomNavigationBarItem(
                     label: '지도',
-                    icon: Icon(Icons.map_outlined, size: 44.w, color: const Color(0xff666666)),
+                    icon: Icon(Meet.tabbarSelectedIndex == 1 ? Icons.map : Icons.map_outlined,
+                        size: 44.w, color: const Color(0xff666666)),
                   ),
                   BottomNavigationBarItem(
                     label: '채팅',
-                    icon: Icon(Icons.chat, size: 44.w, color: const Color(0xff666666)),
+                    icon: Icon(Meet.tabbarSelectedIndex == 2 ? Icons.chat : Icons.chat_outlined,
+                        size: 44.w, color: const Color(0xff666666)),
                   ),
                 ],
                 currentIndex: Meet.tabbarSelectedIndex,

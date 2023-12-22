@@ -48,11 +48,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   Container(
-                    color: Colors.grey,
-                    height: 400.h,
-                    width: double.infinity,
-                    child: const Center(child: Text("프로필")),
-                  ),
+                      height: 400.h,
+                      padding: EdgeInsets.all(Consts.marginPage),
+                      color: Colors.grey,
+                      width: double.infinity,
+                      child: const Center(child: Text("프로필"))),
                   SizedBox(
                     height: 30.h,
                   ),
