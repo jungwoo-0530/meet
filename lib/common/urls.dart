@@ -30,8 +30,12 @@ class URLS {
   // 맵
   static String get addMap => "/api/map/add";
   static String get getMapList => "/api/map/list";
+  static String get deleteMap => "/api/map/delete";
 
   //초대
   static String get getInviteList => "/api/map/invite/list";
   static String get acceptInvite => "/api/map/accept";
+
+  // 채팅
+  static String get getChatList => "/api/chat/list";
 }

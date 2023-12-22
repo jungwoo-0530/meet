@@ -286,7 +286,13 @@ class _EditMapPageState extends State<EditMapPage> {
         'destinationLongitude': destinationLatLng.longitude.toString(),
         'destinationAddress': destinationAddress,
       },
-      onSuccess: (successData) {},
+      onSuccess: (successData) {
+        if (successData['status'] == "200") {
+          Meet.alert(context, "알림", successData['message']).then((value) {
+            Navigator.pop(context);
+          });
+        }
+      },
       onFail: (errorData) {},
     );
   }

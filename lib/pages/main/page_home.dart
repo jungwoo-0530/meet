@@ -44,38 +44,53 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: EdgeInsets.all(Consts.marginPage),
-              child: Center(
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, ROUTES.LOGIN);
-                      },
-                      child: const Text("로그인"),
-                    ),
-                    SizedBox(
-                      height: 30.h,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, ROUTES.JOIN);
-                      },
-                      child: const Text("회원가입"),
-                    ),
-                    SizedBox(
-                      height: 30.h,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Meet.user.setLogout();
-                        Navigator.pushNamed(context, ROUTES.LOGIN);
-                      },
-                      child: const Text("로그아웃"),
-                    )
-                  ],
-                ),
+          : Center(
+              child: Column(
+                children: [
+                  Container(
+                    color: Colors.grey,
+                    height: 400.h,
+                    width: double.infinity,
+                    child: const Center(child: Text("프로필")),
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  Container(
+                    color: Colors.blue,
+                    height: 200.h,
+                    width: double.infinity,
+                    child: const Center(child: Text("공지")),
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, ROUTES.LOGIN);
+                    },
+                    child: const Text("로그인"),
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, ROUTES.JOIN);
+                    },
+                    child: const Text("회원가입"),
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Meet.user.setLogout();
+                      Navigator.pushNamed(context, ROUTES.LOGIN);
+                    },
+                    child: const Text("로그아웃"),
+                  )
+                ],
               ),
             ),
     );

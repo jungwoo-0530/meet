@@ -256,12 +256,12 @@ class _DetailMapPageState extends State<DetailMapPage> {
                   polylines: polyLines,
                   onMapCreated: (GoogleMapController controller) {
                     meetlog("onMapCreated");
-                    _googleCompleterController.complete(controller);
+                    // _googleCompleterController.complete(controller);
 
                     // 마커 위치에 따른 줌
-                    setState(() {
+                    /*setState(() {
                       controller.animateCamera(CameraUpdate.newLatLngBounds(getBoundary(markers), 50));
-                    });
+                    });*/
                   },
                 ),
               ),

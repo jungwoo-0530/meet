@@ -48,7 +48,7 @@ class _MapPageState extends State<MapPage> {
                       SizedBox(
                         height: 500.h,
                       ),
-                      Center(child: Text("등록된 위치가 없습니다.")),
+                      const Center(child: Text("등록된 위치가 없습니다.")),
                     ] else ...[
                       for (int i = 0; i < locationList.length; i++) ...[
                         item(locationList[i]),
@@ -66,16 +66,16 @@ class _MapPageState extends State<MapPage> {
 
     switch (location.status) {
       case "W":
-        status = Text("대기중", style: TextStyle(color: Colors.red));
+        status = const Text("대기중", style: TextStyle(color: Colors.red));
         break;
       case "A":
-        status = Text("거래중", style: TextStyle(color: Colors.blue));
+        status = const Text("거래중", style: TextStyle(color: Colors.blue));
         break;
       case "C":
-        status = Text(isMyOwner ? "거절됨" : "거절함", style: TextStyle(color: Colors.red));
+        status = Text(isMyOwner ? "거절됨" : "거절함", style: const TextStyle(color: Colors.red));
         break;
       default:
-        status = Text("종료", style: TextStyle(color: Colors.grey));
+        status = const Text("종료", style: TextStyle(color: Colors.grey));
     }
 
     return InkWell(
@@ -133,17 +133,78 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ),
                 ],
-                status,
+                PopupMenuButton(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.w, color: const Color(0xFFD2D2D2)),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    itemBuilder: (BuildContext context) {
+                      List<PopupMenuEntry<int>> menuList = [];
+
+                      /*menuList.add(PopupMenuItem(
+                        value: 0,
+                        padding: EdgeInsets.zero,
+                        height: 75.h,
+                        child: Center(
+                          child: Text(
+                            "수정",
+                            style: TextStyle(
+                              color: const Color(0xFF222222),
+                              fontSize: 26.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ));
+                      menuList.add(PopupMenuDivider(height: 1.h));*/
+                      menuList.add(PopupMenuItem(
+                        value: 0,
+                        padding: EdgeInsets.zero,
+                        height: 75.h,
+                        child: Center(
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                              color: const Color(0xFF222222),
+                              fontSize: 26.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ));
+
+                      return menuList;
+                    },
+                    onSelected: (selected) {
+                      meetlog(selected.toString());
+
+                      switch (selected) {
+                        /*case 0:
+                          meetlog("수정");
+                          break;*/
+                        case 0:
+                          meetlog("삭제");
+                          apiDeleteLocation(location.locationId);
+                          break;
+                      }
+                    },
+                    child: const Icon(Icons.more_vert)),
               ],
             ),
             SizedBox(
-              height: 5.h,
+              height: 15.h,
             ),
-            Text(
-              location.destinationAddress,
-              style: TextStyle(
-                fontSize: 24.sp,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  location.destinationAddress,
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                  ),
+                ),
+                status,
+              ],
             ),
           ],
         ),
@@ -168,6 +229,32 @@ class _MapPageState extends State<MapPage> {
 
             locationList.addAll(generatedList);
           }
+        } else {}
+      },
+      onFail: (failData) {},
+    );
+  }
+
+  Future<void> apiDeleteLocation(int locationId) async {
+    await API.callPostApi(
+      URLS.deleteMap,
+      parameters: {
+        'locationId': locationId.toString(),
+      },
+      onSuccess: (successData) {
+        if (successData['status'] == "200") {
+          Meet.alert(context, "알림", successData['message']).then((value) {
+            setState(() {
+              _isLoading = true;
+              locationList.clear();
+
+              apiGetLocationList().then((value) {
+                setState(() {
+                  _isLoading = false;
+                });
+              });
+            });
+          });
         } else {}
       },
       onFail: (failData) {},
