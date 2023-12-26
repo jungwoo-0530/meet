@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -54,6 +55,21 @@ class _MapPageState extends State<MapPage> {
                         item(locationList[i]),
                       ],
                     ],
+                    ElevatedButton(
+                      onPressed: () async {
+                        FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+                        await _firestore.collection("chat_collection").doc("Chat_test1_test2_20231225151657")
+                        .set({
+                          'chatRoomId': "testtest",
+                          'lastUpdateTime': DateTime.now(),
+                          'lastMessage': "test",
+                          'index': 1,
+
+                        });
+                      },
+                      child: const Text("FireBase"),
+                    ),
                   ],
                 ),
               ));
