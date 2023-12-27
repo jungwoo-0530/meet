@@ -29,8 +29,11 @@ class URLS {
 
   // 맵
   static String get addMap => "/api/map/add";
+  static String get getMapDetail => "/api/map/detail";
   static String get getMapList => "/api/map/list";
   static String get deleteMap => "/api/map/delete";
+  static String get getOtherLocation => "/api/map/location/other";
+  static String get updateLocation => "/api/map/location/update";
 
   //초대
   static String get getInviteList => "/api/map/invite/list";

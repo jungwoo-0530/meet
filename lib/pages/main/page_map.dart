@@ -59,13 +59,11 @@ class _MapPageState extends State<MapPage> {
                       onPressed: () async {
                         FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-                        await _firestore.collection("chat_collection").doc("Chat_test1_test2_20231225151657")
-                        .set({
+                        await _firestore.collection("chat_collection").doc("Chat_test1_test2_20231225151657").set({
                           'chatRoomId': "testtest",
                           'lastUpdateTime': DateTime.now(),
                           'lastMessage': "test",
                           'index': 1,
-
                         });
                       },
                       child: const Text("FireBase"),

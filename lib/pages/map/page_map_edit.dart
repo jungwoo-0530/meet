@@ -58,7 +58,7 @@ class _EditMapPageState extends State<EditMapPage> {
       ),
       body: SafeArea(
         child: _isLoading
-            ? const Center(
+            ? Center(
                 child: CircularProgressIndicator(),
               )
             : Padding(
@@ -626,6 +626,8 @@ class _EditMapPageState extends State<EditMapPage> {
       onSuccess: (successData) {
         if (successData['status'] == "200") {
           Meet.alert(context, "알림", successData['message']).then((value) {
+            // 등록 후 보낸 data
+
             Navigator.pop(context);
           });
         }
