@@ -105,7 +105,16 @@ class _SearchAddressPopupState extends State<SearchAddressPopup> {
                       // 타이핑 1.5초 멈추면 API 호출.
                       _apiCallTimer = Timer(const Duration(milliseconds: 1500), () {
                         addressList.clear();
-                        apiAddress();
+                        apiGetKakaoAddress().then((value) {
+                          if (addressList.isEmpty) {
+                            apiGetKakaoKeyword().then((value) {
+                              if (addressList.isEmpty) {
+                                meetlog("검색 결과가 없습니다.");
+                              }
+                            });
+                          }
+                        });
+                        // apiAddress();
                       });
                     });
                   },
@@ -148,7 +157,9 @@ class _SearchAddressPopupState extends State<SearchAddressPopup> {
                                     )
                                   ]),
                               child: Center(
-                                child: Text(addressList[index].roadAddress),
+                                child: Text(
+                                  addressList[index].roadAddress,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -190,5 +201,51 @@ class _SearchAddressPopupState extends State<SearchAddressPopup> {
         setState(() {});
       },
     );
+  }
+
+  Future<void> apiGetKakaoAddress() async {
+    await API.callKaKaoApi(
+      URLS.kakaoSearchAddress,
+      parameters: {'query': address},
+      onSuccess: (successData) async {
+        if (successData['documents'].length > 0) {
+          successData['documents'].forEach((element) {
+            addressList.add(
+              Address(
+                roadAddress: element['address_name'],
+                jibunAddress: element['address_name'],
+                latitude: element['y'],
+                longitude: element['x'],
+              ),
+            );
+            setState(() {});
+          });
+          meetlog(successData.toString());
+        } else {
+          meetlog("주소 검색 결과가 없습니다.");
+        }
+      },
+    );
+  }
+
+  Future<void> apiGetKakaoKeyword() async {
+    await API.callKaKaoApi(URLS.kakaoSearchKeyword, parameters: {'query': address}, onSuccess: (successData) {
+      if (successData['documents'].length > 0) {
+        successData['documents'].forEach(
+          (element) {
+            addressList.add(
+              Address(
+                roadAddress: element['address_name'] + " ," + element['place_name'],
+                jibunAddress: element['address_name'],
+                latitude: element['y'],
+                longitude: element['x'],
+              ),
+            );
+            setState(() {});
+          },
+        );
+      }
+      meetlog(successData.toString());
+    });
   }
 }

@@ -1,11 +1,16 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ya_meet/common/userinfo.dart';
 
 import '../main.dart';
+import 'common.dart';
 import 'constants.dart';
 
 class Meet {
@@ -129,5 +134,126 @@ class Meet {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
+  }
+
+  static Future<bool> permissionPhotosRequest() async {
+    late PermissionStatus status;
+
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt <= 32) {
+        meetlog("안드로이드 12 이하");
+        status = await Permission.storage.request();
+      } else {
+        meetlog("안드로이드 12 이상");
+        status = await Permission.photos.request();
+      }
+    } else if (Platform.isIOS) {
+      status = await Permission.photos.request();
+    }
+
+    switch (status) {
+      case PermissionStatus.granted:
+        meetlog("권한 있음");
+        return true;
+      case PermissionStatus.denied:
+        meetlog("권한 없음");
+        late PermissionStatus reStatus;
+        if (Platform.isAndroid) {
+          final androidInfo = await DeviceInfoPlugin().androidInfo;
+          if (androidInfo.version.sdkInt <= 32) {
+            meetlog("안드로이드 12 이하");
+            reStatus = await Permission.storage.request();
+          } else {
+            meetlog("안드로이드 12 이상");
+            reStatus = await Permission.photos.request();
+          }
+        } else if (Platform.isIOS) {
+          reStatus = await Permission.photos.request();
+        }
+        return reStatus.isGranted ? true : false;
+      case PermissionStatus.permanentlyDenied:
+        meetlog("권한 영구 거부됨");
+        Meet.alertYN(Meet.navigatorKey.currentContext!, "권한 없음", "앱 설정에서 사진접근 권한을 허용하시겠습니까?").then((value) {
+          if (value == true) {
+            openAppSettings();
+          }
+        });
+        return false;
+      case PermissionStatus.restricted: //ios
+        meetlog("권한 한정됨");
+        return false;
+      case PermissionStatus.limited: //ios
+        meetlog("권한 제한됨");
+        return true;
+      default:
+        meetlog("알려지지 않은 권한 상태");
+        return false;
+    }
+  }
+
+  static Future<bool> alertYN(BuildContext context, String title, String message, {String checkBtnTitle = "확인"}) async {
+    bool result = false;
+
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32.r),
+            ),
+            //title: title.isNotEmpty ? Text(title, style: const TextStyle(fontSize: 18, color: Color(0xFF222222))) : null,
+            content: Text(
+              message,
+              style: TextStyle(
+                color: const Color(0xFF222222),
+                fontSize: 28.sp,
+                fontWeight: FontWeight.w400,
+                height: Consts.textLineHeight,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.end,
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  result = false;
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  '취소',
+                  style: TextStyle(
+                    color: const Color(0xFF666666),
+                    fontSize: 28.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              //SizedBox(width: 60.w),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  result = true;
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(checkBtnTitle,
+                    style: TextStyle(
+                      color: const Color(0xFF222222),
+                      fontSize: 28.sp,
+                      fontWeight: FontWeight.w400,
+                    )),
+              ),
+            ],
+          );
+        });
+
+    return result;
   }
 }

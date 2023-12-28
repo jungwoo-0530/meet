@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:ya_meet/pages/chat/page_chat_edit.dart';
@@ -20,6 +21,8 @@ import 'package:ya_meet/pages/map/page_map_edit.dart';
 import 'package:ya_meet/pages/map/page_map_detail.dart';
 import 'package:ya_meet/pages/member/page_join.dart';
 import 'package:ya_meet/pages/member/page_login.dart';
+import 'package:ya_meet/pages/member/page_mypage.dart';
+import 'package:ya_meet/pages/member/page_profile.dart';
 import 'package:ya_meet/pages/page_splash.dart';
 import 'package:ya_meet/popup/pop_searchAddress.dart';
 
@@ -40,10 +43,10 @@ Future<void> main() async {
 
   Firebase.initializeApp();
 
+  KakaoSdk.init(
+  );
 
   // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-
-
 
   await dotenv.load(fileName: "assets/config/.env");
 
@@ -215,6 +218,12 @@ class YaMeet extends StatelessWidget {
               },
               ROUTES.CHAT_EDIT: (context) {
                 return const EditChatPage();
+              },
+              ROUTES.MY_PAGE: (context) {
+                return const MyPagePage();
+              },
+              ROUTES.PROFILE: (context) {
+                return const ProfilePage();
               },
             },
             onGenerateRoute: (settings) {

@@ -8,6 +8,8 @@ class ROUTES {
   //멤버
   static String get LOGIN => '/login';
   static String get JOIN => '/join';
+  static String get MY_PAGE => '/mypage';
+  static String get PROFILE => '/mypage/edit';
 
   //맵
   static String get MAP_DETAIL => '/map/detail';

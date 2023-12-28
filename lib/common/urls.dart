@@ -8,6 +8,15 @@ class URLS {
   static String get apiHost => domain;
   static String get root => "$host/";
 
+  // kakao
+  static String get kakaoDomain => "https://dapi.kakao.com/v2";
+
+  // kakao 주소 검색
+  static String get kakaoSearchAddress => "/local/search/address.json";
+
+  // kakao 키워드 주소 검색
+  static String get kakaoSearchKeyword => "/local/search/keyword.json";
+
   // google
   static String get googleDomain => "https://maps.googleapis.com";
 
@@ -26,6 +35,9 @@ class URLS {
   // 멤버
   static String get join => "/api/member/join";
   static String get login => "/api/member/login";
+  static String get checkName => "/api/member/check/name";
+  static String get getMemberInfo => "/api/member/info"; // 멤버 상세 조회\
+  static String get updateMemberInfo => "/api/member/update"; // 멤버 정보 수정
 
   // 맵
   static String get addMap => "/api/map/add";

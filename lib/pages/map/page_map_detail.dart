@@ -27,9 +27,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
   late LocationDetail locationDetail;
 
-  late Location location;
-
-  //TODO : 테스트 데이터 삭제해야함.
+  Location location = Location();
 
   int myTestPathsIdx = 0;
   int otherTestPathsIdx = 0;
@@ -38,11 +36,13 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
   final Completer<GoogleMapController> _googleCompleterController = Completer();
 
-  // 선유도역 37.537768 126.893816
-  LatLng destination = const LatLng(37.5385534, 126.8943764);
+  // 목적지
+  late LatLng destination;
 
-  // 회사 37.538309 126.891753
-  // LatLng mySourceLocation = const LatLng(37.5381981, 126.8914915);
+  // 초기 내 위치와 상대 위치.
+  late LatLng myFirstLocation;
+  late LatLng otherFirstLocation;
+
   LatLng mySourceLocation = const LatLng(37.5381981, 126.8914915);
 
   // 국민 은행 37.536169, 126.897411
@@ -65,109 +65,111 @@ class _DetailMapPageState extends State<DetailMapPage> {
   @override
   void initState() {
     apiGetDetail().then((value) {
-      apiGetPaths().then((value) {
-        // 냐의 위치
-        location.getCurrentLocation();
+      apiGetMyPaths().then((value) {
+        apiGetOtherLocation().then((value) {
+          // 냐의 위치
+          location.getCurrentLocation();
 
-        //s: 마커 초기화, 마커 타이머
-        markerList.add({
-          'id': "me",
-          'marker': Marker(
-            markerId: const MarkerId('me'),
-            position: mySourceLocation,
-            infoWindow: const InfoWindow(title: '내 위치'),
-            icon: BitmapDescriptor.defaultMarker,
-          )
-        });
-        markerList.add({
-          'id': "other",
-          'marker': Marker(
-            markerId: const MarkerId('other'),
-            position: otherSourceLocation,
-            infoWindow: const InfoWindow(title: '상대방 위치'),
-            icon: BitmapDescriptor.defaultMarker,
-          )
-        });
-        markerList.add({
-          'id': "destination",
-          'marker': Marker(
-            markerId: const MarkerId('destination'),
-            position: destination,
-            infoWindow: const InfoWindow(title: '목적지'),
-            icon: BitmapDescriptor.defaultMarker,
-          )
-        });
-
-        for (var i = 0; i < markerList.length; i++) {
-          markers.add(markerList[i]["marker"]);
-        }
-
-        // 3 초마다 현재 위치를 가져와서 마커를 이동시킨다.
-        markerTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-          // 상대방 위치
-          apiGetOtherLocation().then((value) {
-            meetlog("마커 타이머");
-
-            meetlog("상대방 위치------");
-            meetlog(otherSourceLocation.longitude.toString());
-            meetlog(otherSourceLocation.latitude.toString());
-            meetlog("상대방 위치------");
-
-            //s: 내위치
-            location.getCurrentLocation();
-            meetlog("내 위치-----");
-            meetlog(location.longitude.toString());
-            meetlog(location.latitude.toString());
-            meetlog("내 위치-----");
-
-            mySourceLocation = LatLng(location.latitude, location.longitude);
-            int index = markerList.indexWhere((item) => item["id"] == "me");
-
-            markerList[index] = {
-              "id": "me",
-              "marker": Marker(
-                  markerId: const MarkerId("me"),
-                  position: LatLng(mySourceLocation.latitude, location.longitude), //move to new location
-                  icon: BitmapDescriptor.defaultMarker)
-            };
-            //e: 내위치
-
-            //s: 상대방 위치
-            //e: 상대방 위치
-
-            // 마커들 초기화
-            markers = {};
-            for (var i = 0; i < markerList.length; i++) {
-              markers.add(//repopulate markers
-                  markerList[i]["marker"]);
-            }
-
-            // refresh
-            setState(() {});
-
-            // 내 위치 업데이트
-            apiUpdateMyLocation();
+          //s: 마커 초기화, 마커 타이머
+          markerList.add({
+            'id': "me",
+            'marker': Marker(
+              markerId: const MarkerId('me'),
+              position: mySourceLocation,
+              infoWindow: const InfoWindow(title: '내 위치'),
+              icon: BitmapDescriptor.defaultMarker,
+            )
           });
-        });
-        //e: 마커 초기화, 마커 타이머
+          markerList.add({
+            'id': "other",
+            'marker': Marker(
+              markerId: const MarkerId('other'),
+              position: otherSourceLocation,
+              infoWindow: const InfoWindow(title: '상대방 위치'),
+              icon: BitmapDescriptor.defaultMarker,
+            )
+          });
+          markerList.add({
+            'id': "destination",
+            'marker': Marker(
+              markerId: const MarkerId('destination'),
+              position: destination,
+              infoWindow: const InfoWindow(title: '목적지'),
+              icon: BitmapDescriptor.defaultMarker,
+            )
+          });
 
-        //s: 폴리라인 타이머
-        polyLineTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-          meetlog("폴리라인 타이머");
+          for (var i = 0; i < markerList.length; i++) {
+            markers.add(markerList[i]["marker"]);
+          }
 
-          polyLines = {};
-          polyLineIdx = 0;
-          myPaths = [];
-          otherPaths = [];
-          apiGetPaths().then((value) {
-            setState(() {
-              _isLoading = false;
+          // 3 초마다 현재 위치를 가져와서 마커를 이동시킨다.
+          markerTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+            // 상대방 위치
+            apiGetOtherLocation().then((value) {
+              meetlog("마커 타이머");
+
+              meetlog("상대방 위치------");
+              meetlog(otherSourceLocation.longitude.toString());
+              meetlog(otherSourceLocation.latitude.toString());
+              meetlog("상대방 위치------");
+
+              //s: 내위치
+              location.getCurrentLocation();
+              meetlog("내 위치-----");
+              meetlog(location.longitude.toString());
+              meetlog(location.latitude.toString());
+              meetlog("내 위치-----");
+
+              mySourceLocation = LatLng(location.latitude, location.longitude);
+              int index = markerList.indexWhere((item) => item["id"] == "me");
+
+              markerList[index] = {
+                "id": "me",
+                "marker": Marker(
+                    markerId: const MarkerId("me"),
+                    position: LatLng(mySourceLocation.latitude, location.longitude), //move to new location
+                    icon: BitmapDescriptor.defaultMarker)
+              };
+              //e: 내위치
+
+              //s: 상대방 위치
+              //e: 상대방 위치
+
+              // 마커들 초기화
+              markers = {};
+              for (var i = 0; i < markerList.length; i++) {
+                markers.add(//repopulate markers
+                    markerList[i]["marker"]);
+              }
+
+              // refresh
+              setState(() {});
+
+              // 내 위치 업데이트
+              apiUpdateMyLocation();
             });
           });
-        });
-        //e: 폴리라인 타이머
-        setState(() {
-          _isLoading = false;
+          //e: 마커 초기화, 마커 타이머
+
+          //s: 폴리라인 타이머
+          polyLineTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+            meetlog("폴리라인 타이머");
+
+            polyLines = {};
+            polyLineIdx = 0;
+            myPaths = [];
+            otherPaths = [];
+            apiGetMyPaths().then((value) {
+              setState(() {
+                _isLoading = false;
+              });
+            });
+          });
+          //e: 폴리라인 타이머
+          setState(() {
+            _isLoading = false;
+          });
         });
       });
     });
@@ -276,7 +278,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
                   polylines: polyLines,
                   onMapCreated: (GoogleMapController controller) {
                     meetlog("onMapCreated");
-                    // _googleCompleterController.complete(controller);
+                    _googleCompleterController.complete(controller);
 
                     // 마커 위치에 따른 줌
                     /*setState(() {
@@ -322,7 +324,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
     polyLineIdx++;
   }
 
-  Future<void> apiGetPaths() async {
+  Future<void> apiGetMyPaths() async {
     await API.callNaverApi(
       URLS.naverDirection15,
       parameters: {
@@ -357,6 +359,11 @@ class _DetailMapPageState extends State<DetailMapPage> {
         }
       },
     );
+  }
+
+  Future<void> apiGetOtherPaths() async {
+    // String start;
+    // String goal;
 
     await API.callNaverApi(
       URLS.naverDirection15,
@@ -395,22 +402,25 @@ class _DetailMapPageState extends State<DetailMapPage> {
   }
 
   Future<void> apiGetDetail() async {
+    meetlog(widget.arguments!['locationId'].toString());
+
     await API.callGetApi(
       URLS.getMapDetail,
       parameters: {
-        'locationId': widget.arguments?['locationId'],
+        'locationId': widget.arguments!['locationId'].toString(),
       },
       onSuccess: (successData) {
         if (successData['status'] == "200") {
           setState(() {
             locationDetail = LocationDetail.fromJson(successData['data']);
 
-            mySourceLocation = LatLng(locationDetail.ownerLatitude as double, locationDetail.ownerLongitude as double);
-            otherSourceLocation =
-                LatLng(locationDetail.otherLatitude as double, locationDetail.otherLongitude as double);
+            myFirstLocation =
+                LatLng(double.parse(locationDetail.ownerLatitude), double.parse(locationDetail.ownerLongitude));
+            otherFirstLocation =
+                LatLng(double.parse(locationDetail.otherLatitude), double.parse(locationDetail.otherLongitude));
 
-            destination =
-                LatLng(locationDetail.destinationLatitude as double, locationDetail.destinationLongitude as double);
+            destination = LatLng(
+                double.parse(locationDetail.destinationLatitude), double.parse(locationDetail.destinationLongitude));
           });
         }
       },
@@ -427,7 +437,8 @@ class _DetailMapPageState extends State<DetailMapPage> {
       onSuccess: (successData) {
         if (successData['status'] == "200") {
           setState(() {
-            otherSourceLocation = LatLng(successData['data']['latitude'], successData['data']['longitude']);
+            otherSourceLocation =
+                LatLng(double.parse(successData['data']['latitude']), double.parse(successData['data']['longitude']));
           });
         }
       },

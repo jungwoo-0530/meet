@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                     width: double.infinity,
                     child: const Center(child: Text("공지")),
                   ),
-                  SizedBox(
+                  /*SizedBox(
                     height: 30.h,
                   ),
                   ElevatedButton(
@@ -79,17 +79,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.pushNamed(context, ROUTES.JOIN);
                     },
                     child: const Text("회원가입"),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Meet.user.setLogout();
-                      Navigator.pushNamed(context, ROUTES.LOGIN);
-                    },
-                    child: const Text("로그아웃"),
-                  )
+                  ),*/
                 ],
               ),
             ),
@@ -284,7 +274,8 @@ class _HomePageState extends State<HomePage> {
                           latLng = LatLng(position.latitude, position.longitude);
 
                           await API.callGoogleApi(URLS.googleReverseGeoCoding, parameters: {
-                            'latlng': '${latLng?.latitude},${latLng?.longitude}',
+                            // 'latlng': '${latLng?.latitude},${latLng?.longitude}',
+                            'latlng': '37.2779594830596,127.03896078343',
                           }, onSuccess: (successData) {
                             String status = successData['status'];
                             if (status == 'OK') {
@@ -331,6 +322,7 @@ class _HomePageState extends State<HomePage> {
                                 'inviteeLatitude': "${latLng?.latitude}",
                                 'inviteeLongitude': "${latLng?.longitude}",
                                 'inviteeAddress': address,
+                                'inviteeId': Meet.user.loginId,
                                 'status': "Y",
                               },
                               onSuccess: (successData) {

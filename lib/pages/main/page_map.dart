@@ -65,6 +65,18 @@ class _MapPageState extends State<MapPage> {
                           'lastMessage': "test",
                           'index': 1,
                         });
+
+                        await _firestore
+                            .collection('chat_collection')
+                            .doc('Chat_test1_test2_20231225151657')
+                            .collection('chat')
+                            .add({
+                          'chatRoomId': "testtest",
+                          'message': "test",
+                          'sender': "test1",
+                          'receiver': "test2",
+                          'sendTime': DateTime.now(),
+                        });
                       },
                       child: const Text("FireBase"),
                     ),
@@ -98,10 +110,14 @@ class _MapPageState extends State<MapPage> {
           // 취소된
           Meet.alert(context, "알림", "취소된 거래입니다.");
         } else if (location.status == "A") {
-          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId});
+          meetlog(location.locationId.toString());
+          meetlog(location.status.toString());
+          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
         } else {
           // W : 대기중
-          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId});
+          meetlog(location.locationId.toString());
+          meetlog(location.status.toString());
+          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
         }
       },
       child: Container(

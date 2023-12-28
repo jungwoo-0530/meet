@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../common/common.dart';
 import '../common/constants.dart';
+import '../common/routes.dart';
 
 class AppbarChange extends ChangeNotifier {
   void refresh() {
@@ -67,20 +68,33 @@ class _MeetAppBarState extends State<MeetAppBar> {
             color: Colors.black, //change your color here
           ),
           title: !widget.hideLogo
-              ? Row(
-                  children: [
-                    InkWell(
+              ? SizedBox(
+                  height: 100.h,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
                         onTap: () {
                           meetlog("로고 텍스트 터치2");
                         },
-                        child: Text(Consts.appTitle,
-                            style: TextStyle(
-                              color: const Color(0xFF222222),
-                              fontSize: 34.sp,
-                              fontWeight: FontWeight.w800,
-                            )) //Image.asset(img('logo.png'), width: 250.w, height: 56.h),
+                        child: Text(
+                          Consts.appTitle,
+                          style: TextStyle(
+                            color: const Color(0xFF222222),
+                            fontSize: 34.sp,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                  ],
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, ROUTES.MY_PAGE);
+                        },
+                        child: Icon(Icons.person, size: 60.h),
+                      ),
+                    ],
+                  ),
                 )
               : Text(
                   widget.title ?? "",
