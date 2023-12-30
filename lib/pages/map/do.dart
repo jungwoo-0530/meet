@@ -136,6 +136,7 @@ class InviteInfo {
   int locationId = -1;
   String inviteeId = "";
   String inviterId = "";
+  String chatRoomId = "";
 
   InviteInfo.empty();
 
@@ -144,6 +145,7 @@ class InviteInfo {
     required this.locationId,
     required this.inviteeId,
     required this.inviterId,
+    required this.chatRoomId,
   });
 
   factory InviteInfo.fromJson(Map<String, dynamic> json) {
@@ -153,6 +155,7 @@ class InviteInfo {
         locationId: json['locationId'] ?? -1,
         inviteeId: json['inviteeId'] ?? "",
         inviterId: json['inviterId'] ?? "",
+        chatRoomId: json['chatRoomId'] ?? "",
       );
     } catch (e) {
       meetlog(e.toString());

@@ -263,12 +263,12 @@ class API {
     }
     Uri uri = Uri.parse('$KAKAO_HOST$api$queryParams');
     try {
-      var request = http.Request('GET', uri);
+      // var request = http.Request('GET', uri);
 
 
-      var response = await request.send().timeout(Duration(seconds: Consts.timeoutNetwork));
+      // var response = await request.send().timeout(Duration(seconds: Consts.timeoutNetwork));
       if (response.statusCode == 200) {
-        var apiResult = await response.stream.bytesToString();
+        var apiResult = response.body;
         if (showResponseLog) {
           meetlog("$api API Response : $apiResult");
         }

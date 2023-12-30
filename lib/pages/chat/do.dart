@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../common/common.dart';
+
 class User {
   String id = "";
 
@@ -61,35 +63,45 @@ class Chat {
 
 class ChatFireBase {
   String lastMessage;
-  String lastUpdateTime;
-
-  List<User> users;
-  List<MessageFireBase> messages;
-
+  DateTime lastUpdateTime;
   String status;
+  String createdUser;
+  List<String> users;
+
+  List<MessageFireBase>? messages;
+
+  String? chatRoomId;
 
   ChatFireBase({
     required this.lastMessage,
     required this.lastUpdateTime,
     required this.users,
-    required this.messages,
     required this.status,
+    required this.createdUser,
+    this.messages,
+    this.chatRoomId,
   });
 
   factory ChatFireBase.fromJson(Map<String, dynamic> json) {
     try {
+
+      meetlog(json['messages'].toString());
+
       return ChatFireBase(
         lastMessage: json['lastMessage'] ?? "",
-        lastUpdateTime: json['lastUpdateTime'] ?? "",
+        lastUpdateTime: json['lastUpdateTime'].toDate(),
         status: json['status'] ?? "",
-        users: json['users'].map((user) => User.fromJson(user)).toList(),
+        createdUser: json['createdUser'] ?? "",
+        users: List<String>.from(json['users'] as List),
         messages: json['messages'].map((message) => MessageFireBase.fromJson(message)).toList(),
       );
     } catch (e) {
+      meetlog(e.toString());
       return ChatFireBase(
         lastMessage: "",
-        lastUpdateTime: "",
+        lastUpdateTime: DateTime.now(),
         status: "",
+        createdUser: "",
         users: [],
         messages: [],
       );
@@ -100,43 +112,38 @@ class ChatFireBase {
         'lastMessage': lastMessage,
         'lastUpdateTime': lastUpdateTime,
         'status': status,
-        'users': users.map((user) => user.toJson()).toList(),
-        'messages': messages.map((message) => message.toJson()).toList(),
+        'users': users.map((user) => user).toList(),
+        'createdUser': createdUser,
       };
 
   factory ChatFireBase.fromSnapshot(DocumentSnapshot snapshot) {
-    final List<MessageFireBase> messages = [];
-    final messageSnapshots = List<Map>.from(snapshot['messages'] as List);
+    final List<String> users = [];
+    final userSnapshots = List<String>.from(snapshot['users'] as List);
 
-    final List<User> users = [];
-    final userSnapshots = List<Map>.from(snapshot['users'] as List);
 
-    for (var e in messageSnapshots) {
-      messages.add(MessageFireBase.fromJson(e as Map<String, dynamic>));
-    }
 
     for (var e in userSnapshots) {
-      users.add(User.fromJson(e as Map<String, dynamic>));
+      users.add(e ?? "");
+      // users.add(User.fromJson(e as Map<String, dynamic>));
     }
 
     return ChatFireBase(
       lastMessage: snapshot['lastMessage'] ?? "",
-      lastUpdateTime: snapshot['lastUpdateTime'] ?? "",
+      lastUpdateTime: snapshot['lastUpdateTime'].toDate() ?? DateTime.now(),
       status: snapshot['status'] ?? "",
-      messages: messages,
+      createdUser: snapshot['createdUser'] ?? "",
       users: users,
+      chatRoomId: snapshot.id,
     );
   }
 }
 
 class MessageFireBase {
-  int index;
   String content;
   String sender;
-  String createdTime;
+  DateTime createdTime;
 
   MessageFireBase({
-    required this.index,
     required this.content,
     required this.sender,
     required this.createdTime,
@@ -145,25 +152,32 @@ class MessageFireBase {
   factory MessageFireBase.fromJson(Map<String, dynamic> json) {
     try {
       return MessageFireBase(
-        index: json['index'] ?? -1,
         content: json['content'] ?? "",
         sender: json['sender'] ?? "",
-        createdTime: json['createdTime'] ?? "",
+        createdTime: json['createdTime'].toDate(),
       );
     } catch (e) {
       return MessageFireBase(
-        index: -1,
         content: "",
         sender: "",
-        createdTime: "",
+        createdTime: DateTime.now(),
       );
     }
   }
 
   Map<String, dynamic> toJson() => {
-        'index': index,
         'content': content,
         'sender': sender,
         'createdTime': createdTime,
       };
+
+
+  factory MessageFireBase.fromSnapshot(DocumentSnapshot snapshot) {
+
+    return MessageFireBase(
+      content: snapshot['content'] ?? "",
+      sender: snapshot['sender'] ?? "",
+      createdTime: snapshot['createdTime'].toDate() ?? DateTime.now(),
+    );
+  }
 }

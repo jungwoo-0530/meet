@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_naver_mtter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ya_meet/common/constants.dart';
 import 'package:ya_meet/custom/meet_button.dart';
 import 'package:ya_meet/custom/sub_appbar.dart';
+import 'package:ya_meet/pages/chat/do.dart';
 
 import '../../common/api.dart';
 import '../../common/common.dart';
@@ -625,10 +628,24 @@ class _EditMapPageState extends State<EditMapPage> {
       },
       onSuccess: (successData) {
         if (successData['status'] == "200") {
-          Meet.alert(context, "알림", successData['message']).then((value) {
-            // 등록 후 보낸 data
 
-            Navigator.pop(context);
+          meetlog(successData['data'].toString());
+
+          Meet.alert(context, "알림", successData['message']).then((value) async {
+            // firestore에 저장
+            FirebaseFirestore fireStore = FirebaseFirestore.instance;
+            await fireStore.collection("chat_collection")
+              .doc(successData['data']['chatRoomId'].toString())
+              .set(ChatFireBase(lastMessage: "",
+              lastUpdateTime: DateTime.now(),
+              users: [Meet.user.loginId,otherLoginIdEditingController.text],
+              status: "W",
+              createdUser: Meet.user.loginId,
+            )
+                .toJson()).then((value){
+              Navigator.pop(context);
+            });
+
           });
         }
       },

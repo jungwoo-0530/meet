@@ -217,7 +217,10 @@ class YaMeet extends StatelessWidget {
                 return const EditMapPage();
               },
               ROUTES.CHAT_EDIT: (context) {
-                return const EditChatPage();
+                var arg = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+                return EditChatPage(
+                  arguments: arg,
+                );
               },
               ROUTES.MY_PAGE: (context) {
                 return const MyPagePage();

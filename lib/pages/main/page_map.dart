@@ -55,31 +55,6 @@ class _MapPageState extends State<MapPage> {
                         item(locationList[i]),
                       ],
                     ],
-                    ElevatedButton(
-                      onPressed: () async {
-                        FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-                        await _firestore.collection("chat_collection").doc("Chat_test1_test2_20231225151657").set({
-                          'chatRoomId': "testtest",
-                          'lastUpdateTime': DateTime.now(),
-                          'lastMessage': "test",
-                          'index': 1,
-                        });
-
-                        await _firestore
-                            .collection('chat_collection')
-                            .doc('Chat_test1_test2_20231225151657')
-                            .collection('chat')
-                            .add({
-                          'chatRoomId': "testtest",
-                          'message': "test",
-                          'sender': "test1",
-                          'receiver': "test2",
-                          'sendTime': DateTime.now(),
-                        });
-                      },
-                      child: const Text("FireBase"),
-                    ),
                   ],
                 ),
               ));
@@ -124,7 +99,7 @@ class _MapPageState extends State<MapPage> {
         height: 120.h,
         width: double.infinity,
         padding: EdgeInsets.fromLTRB(Consts.marginPage, 0, Consts.marginPage, 0),
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 16.h),
+        margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 16.h),
         decoration: ShapeDecoration(
             color: Colors.white,
             shape: RoundedRectangleBorder(
@@ -153,6 +128,7 @@ class _MapPageState extends State<MapPage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 28.sp,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ] else ...[
                   Text(
@@ -161,6 +137,8 @@ class _MapPageState extends State<MapPage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 28.sp,
                     ),
+                    overflow: TextOverflow.ellipsis,
+
                   ),
                 ],
                 PopupMenuButton(
@@ -170,23 +148,6 @@ class _MapPageState extends State<MapPage> {
                     ),
                     itemBuilder: (BuildContext context) {
                       List<PopupMenuEntry<int>> menuList = [];
-
-                      /*menuList.add(PopupMenuItem(
-                        value: 0,
-                        padding: EdgeInsets.zero,
-                        height: 75.h,
-                        child: Center(
-                          child: Text(
-                            "수정",
-                            style: TextStyle(
-                              color: const Color(0xFF222222),
-                              fontSize: 26.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ));
-                      menuList.add(PopupMenuDivider(height: 1.h));*/
                       menuList.add(PopupMenuItem(
                         value: 0,
                         padding: EdgeInsets.zero,
@@ -232,6 +193,7 @@ class _MapPageState extends State<MapPage> {
                   style: TextStyle(
                     fontSize: 24.sp,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 status,
               ],
@@ -243,6 +205,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> apiGetLocationList() async {
+
     await API.callGetApi(
       URLS.getMapList,
       parameters: {
@@ -263,31 +226,39 @@ class _MapPageState extends State<MapPage> {
       },
       onFail: (failData) {},
     );
+
   }
 
   Future<void> apiDeleteLocation(int locationId) async {
-    await API.callPostApi(
-      URLS.deleteMap,
-      parameters: {
-        'locationId': locationId.toString(),
-      },
-      onSuccess: (successData) {
-        if (successData['status'] == "200") {
-          Meet.alert(context, "알림", successData['message']).then((value) {
-            setState(() {
-              _isLoading = true;
-              locationList.clear();
 
-              apiGetLocationList().then((value) {
+    Meet.alertYN(context, "알림", '삭제하시겠습니까?\n삭제할 경우 채팅 내역도 삭제됩니다.').then((value) async {
+      if(value == true){
+        await API.callPostApi(
+          URLS.deleteMap,
+          parameters: {
+            'locationId': locationId.toString(),
+          },
+          onSuccess: (successData) {
+            if (successData['status'] == "200") {
+              Meet.alert(context, "알림", successData['message']).then((value) {
                 setState(() {
-                  _isLoading = false;
+                  _isLoading = true;
+                  locationList.clear();
+
+                  apiGetLocationList().then((value) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  });
                 });
               });
-            });
-          });
-        } else {}
-      },
-      onFail: (failData) {},
-    );
+            } else {}
+          },
+          onFail: (failData) {},
+        );
+      }else{
+        return;
+      }
+    });
   }
 }

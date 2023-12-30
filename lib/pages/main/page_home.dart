@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -325,14 +327,20 @@ class _HomePageState extends State<HomePage> {
                                 'inviteeId': Meet.user.loginId,
                                 'status': "Y",
                               },
-                              onSuccess: (successData) {
-                                Navigator.pop(context);
+                              onSuccess: (successData) async {
 
-                                inviteList.removeAt(0);
+                                FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
-                                if (inviteList.isNotEmpty) {
-                                  inviteModel(inviteList.first, context);
-                                }
+                                await fireStore.collection('chat_collection').doc(info.chatRoomId)
+                                .update({'status': 'A'}).then((value){
+                                  Navigator.pop(context);
+
+                                  inviteList.removeAt(0);
+
+                                  if (inviteList.isNotEmpty) {
+                                    inviteModel(inviteList.first, context);
+                                  }
+                                });
                               },
                               onFail: (failData) {},
                             );

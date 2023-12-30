@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/api.dart';
+import '../../common/common.dart';
 import '../../common/constants.dart';
 import '../../common/meet.dart';
 import '../../common/routes.dart';
@@ -16,64 +19,72 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   List<Chat> chatList = [];
 
+  List<ChatFireBase> chatFireBaseList = [];
+
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  late  Stream<QuerySnapshot> chatStream;
+
+
+
   @override
   void initState() {
-    apiGetChatList().then((value) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    chatStream = fireStore.collection("chat_collection").where('users', arrayContains: Meet.user.loginId).orderBy('lastUpdateTime', descending: true).snapshots();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return SafeArea(
       child: _isLoading
           ? const CircularProgressIndicator()
           : Padding(
               padding: EdgeInsets.fromLTRB(0, Consts.marginPage, 0, Consts.marginPage),
-              child: ListView(
-                children: [
-                  if (chatList.isNotEmpty) ...[
-                    for (int i = 0; i < chatList.length; i++) ...[
-                      item(chatList[i]),
-                    ],
-                  ] else ...[
-                    SizedBox(
-                      height: 500.h,
-                    ),
-                    Center(child: Text("등록된 채팅이 없습니다.")),
-                  ]
-                ],
-              ),
+              child: StreamBuilder<QuerySnapshot>( stream: chatStream, builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  final List<ChatFireBase> result = [];
+                  for(var doc in snapshot.data!.docs){
+                    result.add(ChatFireBase.fromSnapshot(doc));
+                  }
+                  return ListView.builder(
+                    itemCount: result.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return item(result[index]);
+                    },
+                  );
+                }else{
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },),
             ),
     );
   }
 
-  Widget item(Chat chat) {
+  Widget item(ChatFireBase chat) {
     Widget status;
 
-    bool isMyOwner = chat.ownerId == Meet.user.loginId;
+    bool isMyOwner = chat.createdUser == Meet.user.loginId;
 
     switch (chat.status) {
       case "W":
-        status = Text("대기중", style: TextStyle(color: Colors.red));
-
+        status = const Text("대기중", style: TextStyle(color: Colors.red));
         break;
       case "A":
-        status = Text("거래중", style: TextStyle(color: Colors.blue));
+        status = const Text("거래중", style: TextStyle(color: Colors.blue));
         break;
       case "C":
-        status = Text(isMyOwner ? "거절됨" : "거절함", style: TextStyle(color: Colors.red));
+        status = Text(isMyOwner ? "거절됨" : "거절함", style: const TextStyle(color: Colors.red));
         break;
       default:
-        status = Text("종료", style: TextStyle(color: Colors.grey));
+        status = const Text("종료", style: TextStyle(color: Colors.grey));
         break;
     }
 
@@ -83,21 +94,34 @@ class _ChatPageState extends State<ChatPage> {
           // 취소된
           Meet.alert(context, "알림", "취소된 거래입니다.");
         } else if (chat.status == "A") {
-          Navigator.pushNamed(context, ROUTES.CHAT_EDIT);
+          Navigator.pushNamed(context, ROUTES.CHAT_EDIT, arguments: {'chatRoomId': chat.chatRoomId, 'firebaseChat': chat});
         } else {
           // W : 대기중
-          Navigator.pushNamed(context, ROUTES.CHAT_EDIT);
+          Navigator.pushNamed(context, ROUTES.CHAT_EDIT, arguments: {'chatRoomId': chat.chatRoomId, 'firebaseChat': chat});
         }
       },
       //TODO : hover 효과 넣기
       child: Container(
         height: 150.h,
         width: double.infinity,
-        decoration: ShapeDecoration(color: Colors.grey, shape: const RoundedRectangleBorder(), shadows: []),
+        decoration: const ShapeDecoration(color: Colors.white, shape: RoundedRectangleBorder(), shadows: []),
         child: Padding(
           padding: EdgeInsets.fromLTRB(10.w, 5.h, 10.w, 5.h),
           child: Container(
-            color: Colors.blue,
+            decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  // side: BorderSide(width: 2.w, color: widget.borderColor),
+                  borderRadius: BorderRadius.circular(32.r),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: const Color(0x14000000),
+                    blurRadius: 32.r,
+                    offset: const Offset(0, 4),
+                    spreadRadius: 0,
+                  )
+                ]),
             child: Row(
               children: [
                 Icon(
@@ -115,8 +139,23 @@ class _ChatPageState extends State<ChatPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(chat.otherId, style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.bold)),
-                          Text("오후 11:20", style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.normal))
+                          Text(chat.users.firstWhere((element){
+                            return element != Meet.user.loginId;
+                          }),
+                            style: TextStyle(
+                                fontSize: 30.sp,
+                                fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            DateFormat('yyyy-MM-dd aa hh:mm', 'ko').format(chat.lastUpdateTime),
+                            style: TextStyle(
+                              fontSize: 26.sp,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -125,8 +164,18 @@ class _ChatPageState extends State<ChatPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("마지막 대화", style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.normal)),
-                          status,
+                          Flexible(
+                            flex: 5,
+                            child: Text(
+                                chat.lastMessage,
+                                style: TextStyle(
+                                    fontSize: 26.sp,
+                                    fontWeight: FontWeight.normal,
+                                ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Flexible(child: status,),
                         ],
                       ),
                     ],
@@ -144,7 +193,30 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> apiGetChatList() async {
-    await API.callGetApi(
+
+    FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+    await fireStore.collection('chat_collection')
+      .where('users', arrayContains: Meet.user.loginId)
+      .orderBy('lastUpdateTime', descending: true)
+      .get();
+
+
+    List<ChatFireBase> result = [];
+
+    for (var element in querySnapshot.docs) {
+      ChatFireBase a = ChatFireBase.fromJson(element.data());
+      a.chatRoomId = element.id;
+      result.add(a);
+    }
+
+    chatFireBaseList.addAll(result);
+
+
+/*    await API.callGetApi(
       URLS.getChatList,
       parameters: {
         "id": Meet.user.loginId,
@@ -163,6 +235,6 @@ class _ChatPageState extends State<ChatPage> {
         } else {}
       },
       onFail: (failData) {},
-    );
+    );*/
   }
 }
