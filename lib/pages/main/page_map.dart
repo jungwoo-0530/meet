@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:focus_detector/focus_detector.dart';
 
 import '../../common/api.dart';
 import '../../common/common.dart';
@@ -24,40 +25,45 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void initState() {
-    locationList = [];
-
-    apiGetLocationList().then((value) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                // padding: EdgeInsets.all(Consts.marginPage),
-                padding: EdgeInsets.fromLTRB(0, Consts.marginPage, 0, Consts.marginPage),
-                child: ListView(
-                  children: [
-                    if (locationList.isEmpty) ...[
-                      SizedBox(
-                        height: 500.h,
-                      ),
-                      const Center(child: Text("등록된 위치가 없습니다.")),
-                    ] else ...[
-                      for (int i = 0; i < locationList.length; i++) ...[
-                        item(locationList[i]),
+    return FocusDetector(
+      onFocusGained: () {
+        _isLoading = true;
+        setState(() {});
+        locationList = [];
+
+        apiGetLocationList().then((value) {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+      },
+      child: SafeArea(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                  // padding: EdgeInsets.all(Consts.marginPage),
+                  padding: EdgeInsets.fromLTRB(0, Consts.marginPage, 0, Consts.marginPage),
+                  child: ListView(
+                    children: [
+                      if (locationList.isEmpty) ...[
+                        SizedBox(
+                          height: 500.h,
+                        ),
+                        const Center(child: Text("등록된 위치가 없습니다.")),
+                      ] else ...[
+                        for (int i = 0; i < locationList.length; i++) ...[
+                          item(locationList[i]),
+                        ],
                       ],
                     ],
-                  ],
-                ),
-              ));
+                  ),
+                )),
+    );
   }
 
   Widget item(LocationDetail location) {
@@ -85,14 +91,18 @@ class _MapPageState extends State<MapPage> {
           // 취소된
           Meet.alert(context, "알림", "취소된 거래입니다.");
         } else if (location.status == "A") {
-          meetlog(location.locationId.toString());
-          meetlog(location.status.toString());
-          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
+          // 거래중
+          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {
+            'locationId': location.locationId.toString(),
+            'title': location.ownerId == Meet.user.loginId ? location.otherId : location.ownerId
+          });
+        } else if (location.status == "E") {
+          // W : 종료
+          Meet.alert(context, "알림", "종료된 거래입니다.");
+          // Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
         } else {
           // W : 대기중
-          meetlog(location.locationId.toString());
-          meetlog(location.status.toString());
-          Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
+          Meet.alert(context, "알림", "상대방의 수락이 필요합니다.");
         }
       },
       child: Container(
@@ -138,7 +148,6 @@ class _MapPageState extends State<MapPage> {
                       fontSize: 28.sp,
                     ),
                     overflow: TextOverflow.ellipsis,
-
                   ),
                 ],
                 PopupMenuButton(
@@ -175,7 +184,7 @@ class _MapPageState extends State<MapPage> {
                           break;*/
                         case 0:
                           meetlog("삭제");
-                          apiDeleteLocation(location.locationId);
+                          apiDeleteLocation(location.locationId, location.chatRoomId);
                           break;
                       }
                     },
@@ -205,7 +214,6 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> apiGetLocationList() async {
-
     await API.callGetApi(
       URLS.getMapList,
       parameters: {
@@ -226,13 +234,11 @@ class _MapPageState extends State<MapPage> {
       },
       onFail: (failData) {},
     );
-
   }
 
-  Future<void> apiDeleteLocation(int locationId) async {
-
+  Future<void> apiDeleteLocation(int locationId, String chatRoomId) async {
     Meet.alertYN(context, "알림", '삭제하시겠습니까?\n삭제할 경우 채팅 내역도 삭제됩니다.').then((value) async {
-      if(value == true){
+      if (value == true) {
         await API.callPostApi(
           URLS.deleteMap,
           parameters: {
@@ -245,9 +251,15 @@ class _MapPageState extends State<MapPage> {
                   _isLoading = true;
                   locationList.clear();
 
-                  apiGetLocationList().then((value) {
-                    setState(() {
-                      _isLoading = false;
+                  // 대화방 상태 변경, 안 보이도록 설정
+                  FirebaseFirestore.instance.collection('chat_collection').doc(chatRoomId).update({
+                    'status': 'E',
+                    'useYn': 'N',
+                  }).then((value) {
+                    apiGetLocationList().then((value) {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     });
                   });
                 });
@@ -256,7 +268,7 @@ class _MapPageState extends State<MapPage> {
           },
           onFail: (failData) {},
         );
-      }else{
+      } else {
         return;
       }
     });

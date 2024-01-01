@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -7,9 +8,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ya_meet/common/urls.dart';
 import 'package:ya_meet/common/userinfo.dart';
 
 import '../main.dart';
+import 'api.dart';
 import 'common.dart';
 import 'constants.dart';
 
@@ -34,6 +37,11 @@ class Meet {
   static int tabbarSelectedIndex = 0;
 
   static final UserInfo user = UserInfo();
+
+  static late Timer meetTimer;
+
+  static double latitude = 0;
+  static double longitude = 0;
 
   factory Meet() {
     return _instance;
@@ -256,4 +264,37 @@ class Meet {
 
     return result;
   }
+
+  static Future<void> apiUpdateMyLocation() async {
+    getCurrentLocation().then((value) async {
+      await API.callPostApi(
+        URLS.updateLocation,
+        parameters: {
+          'myLoginId': Meet.user.loginId,
+          'ownerLatitude': latitude.toString(),
+          'ownerLongitude': longitude.toString(),
+        },
+        onSuccess: (json) {
+          meetlog(json.toString());
+        },
+      );
+    });
+
+  }
+
+  static Future<void> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    // print(permission);
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      latitude = position.latitude;
+      longitude = position.longitude;
+    } catch (e) {
+      meetlog(e.toString());
+    }
+  }
+
 }

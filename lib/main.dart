@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -19,6 +20,7 @@ import 'package:ya_meet/pages/main/page_home.dart';
 import 'package:ya_meet/pages/main/page_map.dart';
 import 'package:ya_meet/pages/map/page_map_edit.dart';
 import 'package:ya_meet/pages/map/page_map_detail.dart';
+import 'package:ya_meet/pages/map/page_map_info.dart';
 import 'package:ya_meet/pages/member/page_join.dart';
 import 'package:ya_meet/pages/member/page_login.dart';
 import 'package:ya_meet/pages/member/page_mypage.dart';
@@ -59,6 +61,10 @@ Future<void> main() async {
       });
 
   await Meet.ready();
+
+  Timer(const Duration(seconds: 5), () async {
+    meetlog("timer");
+  });
 
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return MaterialApp(
@@ -228,6 +234,12 @@ class YaMeet extends StatelessWidget {
               ROUTES.PROFILE: (context) {
                 return const ProfilePage();
               },
+              ROUTES.MAP_INFO: (context) {
+                var arg = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+                return InfoMapPage(
+                  arguments: arg,
+                );
+              },
             },
             onGenerateRoute: (settings) {
               if (settings.name == ROUTES.MAP_SEARCH) {
@@ -298,6 +310,10 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
     WidgetsBinding.instance.addObserver(this);
 
     Meet.permissionLocationRequest();
+
+    Meet.meetTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      Meet.apiUpdateMyLocation();
+    });
 
     super.initState();
 

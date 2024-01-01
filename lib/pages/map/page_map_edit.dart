@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_naver_mtter_naver_map.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -30,11 +29,15 @@ class _EditMapPageState extends State<EditMapPage> {
   final TextEditingController otherLoginIdEditingController = TextEditingController();
   final TextEditingController joinAddressEditingController = TextEditingController();
 
-  final TextEditingController headEditingController = TextEditingController();
+  final TextEditingController hatEditingController = TextEditingController();
+  final TextEditingController outerEditingController = TextEditingController();
   final TextEditingController topEditingController = TextEditingController();
   final TextEditingController bottomEditingController = TextEditingController();
   final TextEditingController shoesEditingController = TextEditingController();
   final TextEditingController etcEditingController = TextEditingController();
+
+  //TODO : 상세 위치 입력
+  final TextEditingController detailLocationEditingController = TextEditingController();
 
   String phoneNumber = "";
   String destinationAddress = "";
@@ -61,7 +64,7 @@ class _EditMapPageState extends State<EditMapPage> {
       ),
       body: SafeArea(
         child: _isLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : Padding(
@@ -286,12 +289,11 @@ class _EditMapPageState extends State<EditMapPage> {
                             height: 16.h,
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("머리"),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Expanded(
+                              const Flexible(flex: 2, child: Text("머리")),
+                              Flexible(
+                                flex: 14,
                                 child: Container(
                                   height: 90.h,
                                   alignment: Alignment.centerLeft,
@@ -304,7 +306,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                   ),
                                   child: TextField(
-                                    controller: headEditingController,
+                                    controller: hatEditingController,
                                     autofocus: false,
                                     canRequestFocus: true,
                                     enabled: true,
@@ -318,7 +320,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     decoration: InputDecoration(
-                                      hintText: "",
+                                      hintText: "모자 종류, 색상",
                                       border: InputBorder.none,
                                       disabledBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -343,12 +345,74 @@ class _EditMapPageState extends State<EditMapPage> {
                             height: 16.h,
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("상의"),
-                              SizedBox(
-                                width: 16.w,
+                              const Flexible(
+                                flex: 2,
+                                child: Text(
+                                  "아우터",
+                                ),
                               ),
-                              Expanded(
+                              Flexible(
+                                flex: 14,
+                                fit: FlexFit.tight,
+                                child: Container(
+                                  height: 90.h,
+                                  width: double.infinity,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: outerEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "아우터 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("상의")),
+                              Flexible(
+                                flex: 14,
                                 child: Container(
                                   height: 90.h,
                                   alignment: Alignment.centerLeft,
@@ -375,7 +439,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     decoration: InputDecoration(
-                                      hintText: "",
+                                      hintText: "상의 종류, 색상",
                                       border: InputBorder.none,
                                       disabledBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -400,12 +464,11 @@ class _EditMapPageState extends State<EditMapPage> {
                             height: 16.h,
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("하의"),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Expanded(
+                              const Flexible(flex: 2, child: Text("하의")),
+                              Flexible(
+                                flex: 14,
                                 child: Container(
                                   height: 90.h,
                                   alignment: Alignment.centerLeft,
@@ -432,7 +495,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     decoration: InputDecoration(
-                                      hintText: "",
+                                      hintText: "하의 종류, 색상",
                                       border: InputBorder.none,
                                       disabledBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -457,12 +520,11 @@ class _EditMapPageState extends State<EditMapPage> {
                             height: 16.h,
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("신발"),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Expanded(
+                              const Flexible(flex: 2, child: Text("신발")),
+                              Flexible(
+                                flex: 14,
                                 child: Container(
                                   height: 90.h,
                                   alignment: Alignment.centerLeft,
@@ -489,7 +551,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     decoration: InputDecoration(
-                                      hintText: "",
+                                      hintText: "신발 종류, 색상",
                                       border: InputBorder.none,
                                       disabledBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -514,12 +576,11 @@ class _EditMapPageState extends State<EditMapPage> {
                             height: 16.h,
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("기타"),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Expanded(
+                              const Flexible(flex: 2, child: Text("기타")),
+                              Flexible(
+                                flex: 14,
                                 child: Container(
                                   height: 90.h,
                                   alignment: Alignment.centerLeft,
@@ -546,7 +607,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                     ),
                                     textAlignVertical: TextAlignVertical.center,
                                     decoration: InputDecoration(
-                                      hintText: "",
+                                      hintText: "안경, 주얼리, 가방 등",
                                       border: InputBorder.none,
                                       disabledBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
@@ -625,27 +686,34 @@ class _EditMapPageState extends State<EditMapPage> {
         'destinationLatitude': destinationLatLng.latitude.toString(),
         'destinationLongitude': destinationLatLng.longitude.toString(),
         'destinationAddress': destinationAddress,
+        'hat': hatEditingController.text,
+        'outer': outerEditingController.text,
+        'top': topEditingController.text,
+        'bottom': bottomEditingController.text,
+        'shoes': shoesEditingController.text,
+        'etc': etcEditingController.text,
       },
       onSuccess: (successData) {
         if (successData['status'] == "200") {
-
           meetlog(successData['data'].toString());
 
           Meet.alert(context, "알림", successData['message']).then((value) async {
             // firestore에 저장
             FirebaseFirestore fireStore = FirebaseFirestore.instance;
-            await fireStore.collection("chat_collection")
-              .doc(successData['data']['chatRoomId'].toString())
-              .set(ChatFireBase(lastMessage: "",
-              lastUpdateTime: DateTime.now(),
-              users: [Meet.user.loginId,otherLoginIdEditingController.text],
-              status: "W",
-              createdUser: Meet.user.loginId,
-            )
-                .toJson()).then((value){
+            await fireStore
+                .collection("chat_collection")
+                .doc(successData['data']['chatRoomId'].toString())
+                .set(ChatFireBase(
+                  lastMessage: "",
+                  lastUpdateTime: DateTime.now(),
+                  users: [Meet.user.loginId, otherLoginIdEditingController.text],
+                  status: "W",
+                  useYn: "Y",
+                  createdUser: Meet.user.loginId,
+                ).toJson())
+                .then((value) {
               Navigator.pop(context);
             });
-
           });
         }
       },

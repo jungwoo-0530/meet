@@ -53,4 +53,7 @@ class URLS {
 
   // 채팅
   static String get getChatList => "/api/chat/list";
+
+  //인상착의
+  static String get updateLook => "/api/look/update";
 }

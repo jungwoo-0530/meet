@@ -60,10 +60,11 @@ class _MeetAppBarState extends State<MeetAppBar> {
       return AppBar(
           centerTitle: false,
           backgroundColor: widget.backgroundColor,
-          automaticallyImplyLeading: false, //widget.hideBackIcon ? false : true,
+          automaticallyImplyLeading: false,
+          //widget.hideBackIcon ? false : true,
           toolbarHeight: 100.h,
           elevation: 2,
-          titleSpacing: Consts.marginPage,
+          // titleSpacing: Consts.marginPage,
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -76,7 +77,7 @@ class _MeetAppBarState extends State<MeetAppBar> {
                     children: [
                       InkWell(
                         onTap: () {
-                          meetlog("로고 텍스트 터치2");
+                          meetlog("로고 텍스트 터치");
                         },
                         child: Text(
                           Consts.appTitle,
@@ -91,7 +92,10 @@ class _MeetAppBarState extends State<MeetAppBar> {
                         onTap: () {
                           Navigator.pushNamed(context, ROUTES.MY_PAGE);
                         },
-                        child: Icon(Icons.person, size: 60.h),
+                        child: Icon(
+                          Icons.person,
+                          size: 60.h,
+                        ),
                       ),
                     ],
                   ),
@@ -115,9 +119,9 @@ class _MeetAppBarState extends State<MeetAppBar> {
       actions.addAll(widget.actions!);
     }
 
-    actions.add(SizedBox(
+    /*actions.add(SizedBox(
       width: Consts.marginPage,
-    ));
+    ));*/
 
     return actions;
   }

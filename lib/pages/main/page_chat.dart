@@ -27,43 +27,53 @@ class _ChatPageState extends State<ChatPage> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
-  late  Stream<QuerySnapshot> chatStream;
-
-
+  late Stream<QuerySnapshot> chatStream;
 
   @override
   void initState() {
-    chatStream = fireStore.collection("chat_collection").where('users', arrayContains: Meet.user.loginId).orderBy('lastUpdateTime', descending: true).snapshots();
+    chatStream = fireStore
+        .collection("chat_collection")
+        .where('users', arrayContains: Meet.user.loginId)
+        .where('useYn', isEqualTo: "Y")
+        .orderBy('lastUpdateTime', descending: true)
+        .snapshots();
+
+    // _isLoading = false;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return SafeArea(
       child: _isLoading
           ? const CircularProgressIndicator()
           : Padding(
               padding: EdgeInsets.fromLTRB(0, Consts.marginPage, 0, Consts.marginPage),
-              child: StreamBuilder<QuerySnapshot>( stream: chatStream, builder: (context, snapshot) {
-                if(snapshot.hasData){
-                  final List<ChatFireBase> result = [];
-                  for(var doc in snapshot.data!.docs){
-                    result.add(ChatFireBase.fromSnapshot(doc));
+              child: StreamBuilder<QuerySnapshot>(
+                stream: chatStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final List<ChatFireBase> result = [];
+                    for (var doc in snapshot.data!.docs) {
+                      result.add(ChatFireBase.fromSnapshot(doc));
+                    }
+
+                    if(result.isEmpty) {
+                      return const Center(child: Text("채팅방이 없습니다."));
+                    }else{
+                      return ListView.builder(
+                        itemCount: result.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return item(result[index]);
+                        },
+                      );
+                    }
+                  } else {
+                    return const Center(child: Text("데이터가 없습니다."));
                   }
-                  return ListView.builder(
-                    itemCount: result.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return item(result[index]);
-                    },
-                  );
-                }else{
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },),
+                },
+              ),
             ),
     );
   }
@@ -90,17 +100,21 @@ class _ChatPageState extends State<ChatPage> {
 
     return InkWell(
       onTap: () {
+        String otherId = chat.users.firstWhere((element) {
+          return element != Meet.user.loginId;
+        });
         if (chat.status == "C") {
           // 취소된
           Meet.alert(context, "알림", "취소된 거래입니다.");
         } else if (chat.status == "A") {
-          Navigator.pushNamed(context, ROUTES.CHAT_EDIT, arguments: {'chatRoomId': chat.chatRoomId, 'firebaseChat': chat});
+          Navigator.pushNamed(context, ROUTES.CHAT_EDIT,
+              arguments: {'chatRoomId': chat.chatRoomId, 'otherId': otherId});
         } else {
           // W : 대기중
-          Navigator.pushNamed(context, ROUTES.CHAT_EDIT, arguments: {'chatRoomId': chat.chatRoomId, 'firebaseChat': chat});
+          Navigator.pushNamed(context, ROUTES.CHAT_EDIT,
+              arguments: {'chatRoomId': chat.chatRoomId, 'otherId': otherId});
         }
       },
-      //TODO : hover 효과 넣기
       child: Container(
         height: 150.h,
         width: double.infinity,
@@ -111,7 +125,6 @@ class _ChatPageState extends State<ChatPage> {
             decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  // side: BorderSide(width: 2.w, color: widget.borderColor),
                   borderRadius: BorderRadius.circular(32.r),
                 ),
                 shadows: [
@@ -139,12 +152,13 @@ class _ChatPageState extends State<ChatPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(chat.users.firstWhere((element){
-                            return element != Meet.user.loginId;
-                          }),
+                          Text(
+                            chat.users.firstWhere((element) {
+                              return element != Meet.user.loginId;
+                            }),
                             style: TextStyle(
-                                fontSize: 30.sp,
-                                fontWeight: FontWeight.bold,
+                              fontSize: 30.sp,
+                              fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -167,15 +181,17 @@ class _ChatPageState extends State<ChatPage> {
                           Flexible(
                             flex: 5,
                             child: Text(
-                                chat.lastMessage,
-                                style: TextStyle(
-                                    fontSize: 26.sp,
-                                    fontWeight: FontWeight.normal,
-                                ),
+                              chat.lastMessage,
+                              style: TextStyle(
+                                fontSize: 26.sp,
+                                fontWeight: FontWeight.normal,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Flexible(child: status,),
+                          Flexible(
+                            child: status,
+                          ),
                         ],
                       ),
                     ],
@@ -193,17 +209,14 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> apiGetChatList() async {
-
     FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
-
-
-    QuerySnapshot<Map<String, dynamic>> querySnapshot =
-    await fireStore.collection('chat_collection')
-      .where('users', arrayContains: Meet.user.loginId)
-      .orderBy('lastUpdateTime', descending: true)
-      .get();
-
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await fireStore
+        .collection('chat_collection')
+        .where('users', arrayContains: Meet.user.loginId)
+        .where('useYn', isEqualTo: 'Y')
+        .orderBy('lastUpdateTime', descending: true)
+        .get();
 
     List<ChatFireBase> result = [];
 
@@ -214,7 +227,6 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     chatFireBaseList.addAll(result);
-
 
 /*    await API.callGetApi(
       URLS.getChatList,

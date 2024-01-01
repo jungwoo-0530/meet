@@ -61,6 +61,7 @@ dependencies:
   device_info_plus: ^9.1.1
   image_picker: ^1.0.4
   grouped_list: ^5.1.2
+  focus_detector: ^2.0.1
 
 dev_dependencies:
   flutter_test:

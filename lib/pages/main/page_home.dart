@@ -137,13 +137,20 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 40.h,
                 ),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "${info.inviterId}님이 서로의 위치 공유를 요청하셨습니다.",
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "${info.inviterId}님이 서로의 위치 공유를 요청하셨습니다.",
+                        ),
+                      ],
+                      style: TextStyle(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.w400,
                       ),
-                    ],
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -218,6 +225,13 @@ class _HomePageState extends State<HomePage> {
     String address = "";
     LatLng? latLng;
 
+    final TextEditingController hatEditingController = TextEditingController();
+    final TextEditingController outerEditingController = TextEditingController();
+    final TextEditingController topEditingController = TextEditingController();
+    final TextEditingController bottomEditingController = TextEditingController();
+    final TextEditingController shoesEditingController = TextEditingController();
+    final TextEditingController etcEditingController = TextEditingController();
+
     showModalBottomSheet(
       backgroundColor: Colors.white,
       isScrollControlled: true,
@@ -231,6 +245,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               padding: EdgeInsets.fromLTRB(24.w, 10.h, 24.w, 0),
               child: Wrap(
+                // crossAxisAlignment: WrapCrossAlignment.start,
                 // mainAxisSize: MainAxisSize.min,
                 spacing: 60.w,
                 children: [
@@ -247,13 +262,17 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 40.h,
                   ),
-                  const Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "초대를 수락하려면 다음 내용이 필요합니다.",
-                        ),
-                      ],
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text.rich(
+                      TextSpan(
+                        children: const [
+                          TextSpan(
+                            text: "초대를 수락하려면 다음 내용이 필요합니다.",
+                          ),
+                        ],
+                        style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -304,6 +323,367 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 40.h,
                   ),
+                  ExpansionTile(
+                    title: Text(
+                      "나의 인상 착의",
+                      style: TextStyle(
+                        fontSize: 32.sp,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    initiallyExpanded: false,
+                    collapsedTextColor: Colors.black,
+                    collapsedIconColor: Colors.black,
+                    iconColor: Colors.black,
+                    shape: const Border(),
+                    tilePadding: EdgeInsets.zero,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(flex: 2, child: Text("모자")),
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              height: 90.h,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: hatEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "모자 종류, 색상",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(
+                            flex: 2,
+                            child: Text(
+                              "아우터",
+                            ),
+                          ),
+                          Flexible(
+                            flex: 14,
+                            fit: FlexFit.tight,
+                            child: Container(
+                              height: 90.h,
+                              width: double.infinity,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: outerEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "아우터 종류, 색상",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(flex: 2, child: Text("상의")),
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              height: 90.h,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: topEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "상의 종류, 색상",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(flex: 2, child: Text("하의")),
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              height: 90.h,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: bottomEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "하의 종류, 색상",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(flex: 2, child: Text("신발")),
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              height: 90.h,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: shoesEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "신발 종류, 색상",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Flexible(flex: 2, child: Text("기타")),
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              height: 90.h,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: etcEditingController,
+                                autofocus: false,
+                                canRequestFocus: true,
+                                enabled: true,
+                                keyboardType: TextInputType.name,
+                                maxLength: 20,
+                                style: TextStyle(
+                                  color: const Color(0xff222222),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                  decorationThickness: 0,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  hintText: "안경, 주얼리, 가방 등",
+                                  border: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  counterText: "",
+                                  hintStyle: TextStyle(
+                                    color: const Color(0xff999999),
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  isCollapsed: true,
+                                ),
+                                onChanged: (value) {},
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                    ],
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -321,18 +701,28 @@ class _HomePageState extends State<HomePage> {
                               parameters: {
                                 'id': info.inviteId.toString(),
                                 'locationId': info.locationId.toString(),
-                                'inviteeLatitude': "${latLng?.latitude}",
-                                'inviteeLongitude': "${latLng?.longitude}",
-                                'inviteeAddress': address,
+                                // 'inviteeLatitude': "${latLng?.latitude}",
+                                'inviteeLatitude': "37.273536",
+                                // 'inviteeLongitude': "${latLng?.longitude}",
+                                'inviteeLongitude': "127.036567",
+                                // 'inviteeAddress': address,
+                                'inviteeAddress': "아주대",
                                 'inviteeId': Meet.user.loginId,
                                 'status': "Y",
+                                'hat': hatEditingController.text,
+                                'outer': outerEditingController.text,
+                                'top': topEditingController.text,
+                                'bottom': bottomEditingController.text,
+                                'shoes': shoesEditingController.text,
+                                'etc': etcEditingController.text,
                               },
                               onSuccess: (successData) async {
-
                                 FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
-                                await fireStore.collection('chat_collection').doc(info.chatRoomId)
-                                .update({'status': 'A'}).then((value){
+                                await fireStore
+                                    .collection('chat_collection')
+                                    .doc(info.chatRoomId)
+                                    .update({'status': 'A'}).then((value) {
                                   Navigator.pop(context);
 
                                   inviteList.removeAt(0);

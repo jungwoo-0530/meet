@@ -72,6 +72,8 @@ class ChatFireBase {
 
   String? chatRoomId;
 
+  String useYn;
+
   ChatFireBase({
     required this.lastMessage,
     required this.lastUpdateTime,
@@ -80,6 +82,7 @@ class ChatFireBase {
     required this.createdUser,
     this.messages,
     this.chatRoomId,
+    required this.useYn,
   });
 
   factory ChatFireBase.fromJson(Map<String, dynamic> json) {
@@ -94,6 +97,7 @@ class ChatFireBase {
         createdUser: json['createdUser'] ?? "",
         users: List<String>.from(json['users'] as List),
         messages: json['messages'].map((message) => MessageFireBase.fromJson(message)).toList(),
+        useYn: json['useYn'] ?? "",
       );
     } catch (e) {
       meetlog(e.toString());
@@ -104,6 +108,7 @@ class ChatFireBase {
         createdUser: "",
         users: [],
         messages: [],
+        useYn: "",
       );
     }
   }
@@ -114,6 +119,7 @@ class ChatFireBase {
         'status': status,
         'users': users.map((user) => user).toList(),
         'createdUser': createdUser,
+        'useYn': useYn,
       };
 
   factory ChatFireBase.fromSnapshot(DocumentSnapshot snapshot) {
@@ -134,6 +140,7 @@ class ChatFireBase {
       createdUser: snapshot['createdUser'] ?? "",
       users: users,
       chatRoomId: snapshot.id,
+      useYn: snapshot['useYn'] ?? "",
     );
   }
 }
@@ -142,11 +149,13 @@ class MessageFireBase {
   String content;
   String sender;
   DateTime createdTime;
+  String readYn;
 
   MessageFireBase({
     required this.content,
     required this.sender,
     required this.createdTime,
+    required this.readYn,
   });
 
   factory MessageFireBase.fromJson(Map<String, dynamic> json) {
@@ -155,12 +164,14 @@ class MessageFireBase {
         content: json['content'] ?? "",
         sender: json['sender'] ?? "",
         createdTime: json['createdTime'].toDate(),
+        readYn: json['readYn'].toDate(),
       );
     } catch (e) {
       return MessageFireBase(
         content: "",
         sender: "",
         createdTime: DateTime.now(),
+        readYn: "",
       );
     }
   }
@@ -169,6 +180,7 @@ class MessageFireBase {
         'content': content,
         'sender': sender,
         'createdTime': createdTime,
+        'readYn': readYn,
       };
 
 
@@ -178,6 +190,7 @@ class MessageFireBase {
       content: snapshot['content'] ?? "",
       sender: snapshot['sender'] ?? "",
       createdTime: snapshot['createdTime'].toDate() ?? DateTime.now(),
+      readYn: snapshot['readYn'] ?? "",
     );
   }
 }

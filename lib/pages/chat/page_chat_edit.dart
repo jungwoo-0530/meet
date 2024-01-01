@@ -17,13 +17,11 @@ class EditChatPage extends StatefulWidget {
 
   final Map<String, dynamic>? arguments;
 
-
   @override
   State<EditChatPage> createState() => _EditChatPageState();
 }
 
 class _EditChatPageState extends State<EditChatPage> {
-
   bool _isLoading = false;
 
   final TextEditingController myEditingController = TextEditingController();
@@ -47,33 +45,32 @@ class _EditChatPageState extends State<EditChatPage> {
 
   @override
   void initState() {
-
     chatStream = fireStore
         .collection("chat_collection")
         .doc(widget.arguments?['chatRoomId'].toString())
-        .collection("messages").orderBy('createdTime').limitToLast(messageCount).snapshots();
+        .collection("messages")
+        .orderBy('createdTime')
+        .limitToLast(messageCount)
+        .snapshots();
 
-    chatFireBase = widget.arguments?['firebaseChat'] as ChatFireBase;
+    // chatFireBase = widget.arguments?['firebaseChat'] as ChatFireBase;
 
     _isLoading = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.addListener(() {
-
-        if (_scrollController.position.atEdge ) {
+        if (_scrollController.position.atEdge) {
           bool isTop = _scrollController.position.pixels != 0;
-          if(isTop) {
-              chatStream = fireStore
-                  .collection("chat_collection")
-                  .doc(widget.arguments?['chatRoomId'].toString())
-                  .collection("messages")
-                  .orderBy('createdTime', descending: false)
-                  .limitToLast(messageCount + _limit)
-                  .snapshots();
+          if (isTop) {
+            chatStream = fireStore
+                .collection("chat_collection")
+                .doc(widget.arguments?['chatRoomId'].toString())
+                .collection("messages")
+                .orderBy('createdTime', descending: false)
+                .limitToLast(messageCount + _limit)
+                .snapshots();
 
-            setState(() {
-            });
-
+            setState(() {});
           }
         }
       });
@@ -81,7 +78,6 @@ class _EditChatPageState extends State<EditChatPage> {
 
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -95,105 +91,163 @@ class _EditChatPageState extends State<EditChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MeetSubAppBar(
-        title: chatFireBase.users[0] == Meet.user.loginId ? chatFireBase.users[1] : chatFireBase.users[0]
+        title: widget.arguments?['otherId'],
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: _isLoading ? const Center(child: CircularProgressIndicator(),) : Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: chatStream,
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if(snapshot.hasData){
-                    List<MessageFireBase> result = [];
-                    for(var doc in snapshot.data!.docs){
-                      result.add(MessageFireBase.fromSnapshot(doc));
-                    }
-                    messageCount = result.length;
-
-                    return Stack(
-                      children: [
-                        GroupedListView(elements: result, groupBy: (element)=>DateFormat('yyyy-MM-dd EEE', 'ko').format(element.createdTime),
-                          reverse: true,
-                          order: GroupedListOrder.DESC,
-                          controller: _scrollController,
-                          groupSeparatorBuilder: (String groupByValue) => Container(
-                            padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
-                            child: Row(
-                              children: [
-                                Expanded(child: Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0,)),
-                                Text(groupByValue, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.normal),),
-                                Expanded(child: Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0,)),
-                              ],
-                            ),
-                          ),
-                          itemBuilder: (context, element) => messageItem(element.sender == Meet.user.loginId ? true : false, element),
-                        ),
-                        /*if(_isNewMessage)...[
-                          Positioned(child: Text("test"), bottom: 0, ),
-                        ]*/
-                      ],
-                    );
-
-                  }else{
-                    return const Center(child: Text("상대방에게 메시지를 보내보세요."),);
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0),
-            SizedBox(height: 10.h,),
-            Container(
-              height: 70.h,
-              color: Colors.white,
-              padding: EdgeInsets.fromLTRB(Consts.marginPage, 0, Consts.marginPage, 0),
-              child: Row(
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: myEditingController,
-                      decoration: InputDecoration(
-                        hintText: '메세지를 입력하세요.',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(100.r),
-                          borderSide: const BorderSide(
-                            width: 0.1,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 70.h/2),
-                      ),
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: chatStream,
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          List<MessageFireBase> result = [];
+                          for (var doc in snapshot.data!.docs) {
+                            result.add(MessageFireBase.fromSnapshot(doc));
+                          }
+                          messageCount = result.length;
+
+                          updateReadYn();
+
+                          return Stack(
+                            children: [
+                              GroupedListView(
+                                elements: result,
+                                groupBy: (element) => DateFormat('yyyy-MM-dd EEE', 'ko').format(element.createdTime),
+                                reverse: true,
+                                order: GroupedListOrder.DESC,
+                                controller: _scrollController,
+                                groupSeparatorBuilder: (String groupByValue) => Container(
+                                  padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: Divider(
+                                        color: const Color(0xFFE2E2E2),
+                                        thickness: 1.w,
+                                        height: 0,
+                                      )),
+                                      Text(
+                                        groupByValue,
+                                        style: TextStyle(
+                                          fontSize: 20.sp,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                      Expanded(
+                                          child: Divider(
+                                        color: const Color(0xFFE2E2E2),
+                                        thickness: 1.w,
+                                        height: 0,
+                                      )),
+                                    ],
+                                  ),
+                                ),
+                                itemBuilder: (context, element) =>
+                                    messageItem(element.sender == Meet.user.loginId ? true : false, element),
+                              ),
+                              /*if(_isNewMessage)...[
+                          Positioned(child: Text("test"), bottom: 0, ),
+                        ]*/
+                            ],
+                          );
+                        } else {
+                          return const Center(
+                            child: Text("상대방에게 메시지를 보내보세요."),
+                          );
+                        }
+                      },
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      meetlog("메시지 전송");
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Container(
+                    height: 70.h,
+                    color: Colors.white,
+                    padding: EdgeInsets.fromLTRB(Consts.marginPage, 0, Consts.marginPage, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: myEditingController,
+                            decoration: InputDecoration(
+                              hintText: '메세지를 입력하세요.',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(100.r),
+                                borderSide: const BorderSide(
+                                  width: 0.1,
+                                  style: BorderStyle.none,
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 70.h / 2),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            meetlog("메시지 전송");
 
-                      fireStore.collection("chat_collection").doc(widget.arguments?['chatRoomId'].toString()).collection("messages").add({
-                        'content': myEditingController.text,
-                        'createdTime': DateTime.now(),
-                        'sender': Meet.user.loginId,
-                      }).then((value){
-                        fireStore.collection("chat_collection").doc(widget.arguments?['chatRoomId'].toString()).update({
-                          'lastMessage': myEditingController.text,
-                          'lastUpdateTime': DateTime.now(),
-                        });
-                        myEditingController.text = "";
-                      });
-                    },
-                    icon: const Icon(Icons.send),
+                            fireStore
+                                .collection("chat_collection")
+                                .doc(widget.arguments?['chatRoomId'].toString())
+                                .collection("messages")
+                                .add({
+                              'content': myEditingController.text,
+                              'createdTime': DateTime.now(),
+                              'sender': Meet.user.loginId,
+                              'readYn': "N",
+                            }).then((value) {
+                              fireStore
+                                  .collection("chat_collection")
+                                  .doc(widget.arguments?['chatRoomId'].toString())
+                                  .update({
+                                'lastMessage': myEditingController.text,
+                                'lastUpdateTime': DateTime.now(),
+                              });
+                              myEditingController.text = "";
+                            });
+                          },
+                          icon: const Icon(Icons.send),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            )
-          ],
-        ),
       ),
     );
+  }
+
+  void updateReadYn() {
+    fireStore
+        .collection('chat_collection')
+        .doc(widget.arguments?['chatRoomId'].toString())
+        .collection('messages')
+        .where('sender', isNotEqualTo: Meet.user.loginId)
+        .where('readYn', isEqualTo: 'N')
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        fireStore
+            .collection('chat_collection')
+            .doc(widget.arguments?['chatRoomId'].toString())
+            .collection('messages')
+            .doc(doc.id)
+            .update({
+          'readYn': 'Y',
+        });
+      }
+    });
   }
 }
 
@@ -216,9 +270,28 @@ Widget messageItem(bool isMine, MessageFireBase message) {
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if(isMine)...[
-                  Text(DateFormat('aa hh:mm', 'ko').format(message.createdTime), style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.normal),),
-                  SizedBox(width: 10.w,),
+                if (isMine) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (message.readYn == "N") ...[
+                        Text(
+                          "안 읽음",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                      Text(
+                        DateFormat('aa hh:mm', 'ko').format(message.createdTime),
+                        style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
                 ],
                 Container(
                   width: 350.w,
@@ -236,9 +309,14 @@ Widget messageItem(bool isMine, MessageFireBase message) {
                     maxLines: 99,
                   ),
                 ),
-                if(!isMine)...[
-                  SizedBox(width: 10.w,),
-                  Text(DateFormat('aa hh:mm', 'ko').format(message.createdTime), style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.normal),),
+                if (!isMine) ...[
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Text(
+                    DateFormat('aa hh:mm', 'ko').format(message.createdTime),
+                    style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.normal),
+                  ),
                 ]
               ],
             ),

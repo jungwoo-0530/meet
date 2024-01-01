@@ -15,6 +15,7 @@ class ROUTES {
   static String get MAP_DETAIL => '/map/detail';
   static String get MAP_ADD => '/map/add';
   static String get MAP_SEARCH => '/map/search';
+  static String get MAP_INFO => '/map/info';
 
   //채팅
   static String get CHAT_EDIT => '/chat/edit';
