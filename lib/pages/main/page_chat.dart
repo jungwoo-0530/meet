@@ -38,8 +38,6 @@ class _ChatPageState extends State<ChatPage> {
         .orderBy('lastUpdateTime', descending: true)
         .snapshots();
 
-    // _isLoading = false;
-
     super.initState();
   }
 
@@ -56,16 +54,37 @@ class _ChatPageState extends State<ChatPage> {
                   if (snapshot.hasData) {
                     final List<ChatFireBase> result = [];
                     for (var doc in snapshot.data!.docs) {
+                      var chatFireBase = ChatFireBase.fromSnapshot(doc);
+                      if (chatFireBase.status == "W" && chatFireBase.createdUser != Meet.user.loginId){
+                        continue;
+                      }
                       result.add(ChatFireBase.fromSnapshot(doc));
                     }
 
-                    if(result.isEmpty) {
+                    if (result.isEmpty) {
                       return const Center(child: Text("채팅방이 없습니다."));
-                    }else{
+                    } else {
                       return ListView.builder(
                         itemCount: result.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return item(result[index]);
+                          var snapshots = FirebaseFirestore.instance
+                              .collection('chat_collection')
+                              .doc(result[index].chatRoomId)
+                              .collection('messages')
+                              .snapshots();
+                          return StreamBuilder(
+                              stream: snapshots,
+                              builder: (BuildContext context, snapshot2) {
+                                int notReadCnt = 0;
+                                snapshot2.data?.docs.forEach((element) {
+                                  if (element.data()['readYn'] == "N") {
+                                    notReadCnt++;
+                                  }
+                                });
+                                meetlog(notReadCnt.toString());
+                                return item(result[index], notReadCnt);
+                              });
+                          // return item(result[index]);
                         },
                       );
                     }
@@ -78,7 +97,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget item(ChatFireBase chat) {
+  Widget item(ChatFireBase chat, int notReadCnt) {
     Widget status;
 
     bool isMyOwner = chat.createdUser == Meet.user.loginId;
@@ -107,12 +126,14 @@ class _ChatPageState extends State<ChatPage> {
           // 취소된
           Meet.alert(context, "알림", "취소된 거래입니다.");
         } else if (chat.status == "A") {
+          meetlog(chat.otherImage!);
           Navigator.pushNamed(context, ROUTES.CHAT_EDIT,
               arguments: {'chatRoomId': chat.chatRoomId, 'otherId': otherId});
-        } else {
+        } else if(chat.status == 'W'){
           // W : 대기중
-          Navigator.pushNamed(context, ROUTES.CHAT_EDIT,
-              arguments: {'chatRoomId': chat.chatRoomId, 'otherId': otherId});
+          Meet.alert(context, "알림", "상대방의 수락이 필요합니다.");
+        }else{
+          Meet.alert(context, "알림", "종료된 거래입니다.");
         }
       },
       child: Container(
@@ -137,10 +158,18 @@ class _ChatPageState extends State<ChatPage> {
                 ]),
             child: Row(
               children: [
-                Icon(
-                  Icons.adb_rounded,
-                  size: 100.r,
-                ),
+                /*chat.otherImage!.isEmpty
+                    ? Icon(
+                        Icons.people,
+                        size: 100.r,
+                      )
+                    : Image.network(chat.otherImage!, width: 100.r, height: 100.r, fit: BoxFit.fill,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        return Icon(
+                          Icons.earbuds,
+                          size: 100.r,
+                        );
+                      }),*/
                 SizedBox(
                   width: 20.w,
                 ),
@@ -180,13 +209,44 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           Flexible(
                             flex: 5,
-                            child: Text(
-                              chat.lastMessage,
-                              style: TextStyle(
-                                fontSize: 26.sp,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: Text(
+                                    chat.lastMessage,
+                                    style: TextStyle(
+                                      fontSize: 26.sp,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10.w,
+                                ),
+                                if (notReadCnt > 0)
+                                  Container(
+                                    height: 40.r,
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Consts.primaryColor,
+                                      borderRadius: BorderRadius.circular(100.r),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        notReadCnt.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 23.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                           Flexible(
@@ -249,4 +309,11 @@ class _ChatPageState extends State<ChatPage> {
       onFail: (failData) {},
     );*/
   }
+}
+
+class CombineStream {
+  final ChatFireBase chat;
+  final Users users;
+
+  CombineStream(this.chat, this.users);
 }

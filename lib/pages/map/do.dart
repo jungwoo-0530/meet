@@ -67,6 +67,7 @@ class LocationDetail {
   String destinationLatitude = "";
   String destinationLongitude = "";
   String destinationAddress = "";
+  String destinationDetailAddress = "";
 
   String chatRoomId = "";
 
@@ -103,6 +104,7 @@ class LocationDetail {
     required this.destinationLatitude,
     required this.destinationLongitude,
     required this.destinationAddress,
+    required this.destinationDetailAddress,
     required this.chatRoomId,
     required this.status,
     required this.myLookId,
@@ -137,6 +139,7 @@ class LocationDetail {
         destinationLatitude: json['destinationLatitude'] ?? "",
         destinationLongitude: json['destinationLongitude'] ?? "",
         destinationAddress: json['destinationAddress'] ?? "",
+        destinationDetailAddress: json['destinationDetailAddress'] ?? "",
         chatRoomId: json['chatRoomId'] ?? "",
         status: json['status'] ?? "",
         myLookId: json['myLookId'] ?? -1,
@@ -169,6 +172,7 @@ class LocationDetail {
         destinationLatitude: "",
         destinationLongitude: "",
         destinationAddress: "",
+        destinationDetailAddress: "",
         chatRoomId: "",
         status: "",
         myLookId: -1,
@@ -197,6 +201,11 @@ class InviteInfo {
   String inviterId = "";
   String chatRoomId = "";
 
+  String inviterAddress = "";
+
+  String destinationAddress = "";
+  String destinationAddressDetail = "";
+
   InviteInfo.empty();
 
   InviteInfo({
@@ -205,6 +214,9 @@ class InviteInfo {
     required this.inviteeId,
     required this.inviterId,
     required this.chatRoomId,
+    required this.inviterAddress,
+    required this.destinationAddress,
+    required this.destinationAddressDetail,
   });
 
   factory InviteInfo.fromJson(Map<String, dynamic> json) {
@@ -215,6 +227,9 @@ class InviteInfo {
         inviteeId: json['inviteeId'] ?? "",
         inviterId: json['inviterId'] ?? "",
         chatRoomId: json['chatRoomId'] ?? "",
+        inviterAddress: json['inviterAddress'] ?? "",
+        destinationAddress: json['destinationAddress'] ?? "",
+        destinationAddressDetail: json['destinationDetailAddress'] ?? "",
       );
     } catch (e) {
       meetlog(e.toString());

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ya_meet/common/routes.dart';
 import 'package:ya_meet/custom/sub_appbar.dart';
 
-import '../../common/common.dart';
 import '../../common/meet.dart';
 
 class MyPagePage extends StatefulWidget {
@@ -28,7 +27,7 @@ class _MyPagePageState extends State<MyPagePage> {
             child: Align(
               alignment: Alignment.center,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Text(
                   "로그아웃",
                   style: TextStyle(fontSize: 30.sp, color: Colors.black),

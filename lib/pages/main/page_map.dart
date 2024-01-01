@@ -54,7 +54,7 @@ class _MapPageState extends State<MapPage> {
                         SizedBox(
                           height: 500.h,
                         ),
-                        const Center(child: Text("등록된 위치가 없습니다.")),
+                        const Center(child: Text("등록된 지도가 없습니다.")),
                       ] else ...[
                         for (int i = 0; i < locationList.length; i++) ...[
                           item(locationList[i]),
@@ -99,7 +99,6 @@ class _MapPageState extends State<MapPage> {
         } else if (location.status == "E") {
           // W : 종료
           Meet.alert(context, "알림", "종료된 거래입니다.");
-          // Navigator.pushNamed(context, ROUTES.MAP_DETAIL, arguments: {'locationId': location.locationId.toString()});
         } else {
           // W : 대기중
           Meet.alert(context, "알림", "상대방의 수락이 필요합니다.");
@@ -163,7 +162,7 @@ class _MapPageState extends State<MapPage> {
                         height: 75.h,
                         child: Center(
                           child: Text(
-                            "삭제",
+                            "취소",
                             style: TextStyle(
                               color: const Color(0xFF222222),
                               fontSize: 26.sp,
@@ -237,7 +236,8 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> apiDeleteLocation(int locationId, String chatRoomId) async {
-    Meet.alertYN(context, "알림", '삭제하시겠습니까?\n삭제할 경우 채팅 내역도 삭제됩니다.').then((value) async {
+
+    Meet.alertYN(context, "알림", '거래를 취소하시겠습니까?\n취소할 경우 채팅 내역도 삭제됩니다.').then((value) async {
       if (value == true) {
         await API.callPostApi(
           URLS.deleteMap,

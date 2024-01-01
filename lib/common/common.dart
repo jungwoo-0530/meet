@@ -6,6 +6,10 @@ String img(String filename) {
   return "assets/images/$filename";
 }
 
+String profileImg(String fileName){
+  return "assets/profile/$fileName";
+}
+
 void meetlog(String message, {String tag = 'MEET'}) {
   if (kDebugMode == false) {
     return;

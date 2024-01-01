@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../common/api.dart';
 import '../../common/common.dart';
+import '../../common/constants.dart';
 import '../../common/meet.dart';
 import '../../common/routes.dart';
 import '../../common/urls.dart';
@@ -110,6 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: TextField(
                         controller: passwordEditingController,
+                        obscureText: true,
                         autofocus: false,
                         canRequestFocus: true,
                         enabled: true,
@@ -149,6 +151,12 @@ class _LoginPageState extends State<LoginPage> {
                   height: 20.h,
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Consts.primaryOpacityColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                  ),
                   onPressed: () {
                     API.callPostApi(URLS.login, parameters: {
                       "loginId": idEditingController.text,
@@ -168,12 +176,22 @@ class _LoginPageState extends State<LoginPage> {
                             .then((value) {
                           Navigator.pushNamedAndRemoveUntil(context, ROUTES.MAIN, (route) => false);
                         });
+                      }else{
+                        Meet.alert(context, "알림", successData['message']);
                       }
-                    }, onFail: (failData) {});
+                    }, onFail: (failData) {
+                      Meet.alert(context, "알림", failData['message']);
+                    });
                   },
-                  child: Text("로그인"),
+                  child: Text("확인"),
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Consts.primaryOpacityColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.pushNamed(context, ROUTES.JOIN);
                   },

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,141 +90,144 @@ class _EditChatPageState extends State<EditChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MeetSubAppBar(
-        title: widget.arguments?['otherId'],
-      ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Column(
-                children: [
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: chatStream,
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          List<MessageFireBase> result = [];
-                          for (var doc in snapshot.data!.docs) {
-                            result.add(MessageFireBase.fromSnapshot(doc));
-                          }
-                          messageCount = result.length;
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: MeetSubAppBar(
+          title: widget.arguments?['otherId'],
+        ),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: chatStream,
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            List<MessageFireBase> result = [];
+                            for (var doc in snapshot.data!.docs) {
+                              result.add(MessageFireBase.fromSnapshot(doc));
+                            }
+                            messageCount = result.length;
 
-                          updateReadYn();
+                            updateReadYn();
 
-                          return Stack(
-                            children: [
-                              GroupedListView(
-                                elements: result,
-                                groupBy: (element) => DateFormat('yyyy-MM-dd EEE', 'ko').format(element.createdTime),
-                                reverse: true,
-                                order: GroupedListOrder.DESC,
-                                controller: _scrollController,
-                                groupSeparatorBuilder: (String groupByValue) => Container(
-                                  padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          child: Divider(
-                                        color: const Color(0xFFE2E2E2),
-                                        thickness: 1.w,
-                                        height: 0,
-                                      )),
-                                      Text(
-                                        groupByValue,
-                                        style: TextStyle(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.normal,
+                            return Stack(
+                              children: [
+                                GroupedListView(
+                                  elements: result,
+                                  groupBy: (element) => DateFormat('yyyy-MM-dd EEE', 'ko').format(element.createdTime),
+                                  reverse: true,
+                                  order: GroupedListOrder.DESC,
+                                  controller: _scrollController,
+                                  groupSeparatorBuilder: (String groupByValue) => Container(
+                                    padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Divider(
+                                          color: const Color(0xFFE2E2E2),
+                                          thickness: 1.w,
+                                          height: 0,
+                                        )),
+                                        Text(
+                                          groupByValue,
+                                          style: TextStyle(
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.normal,
+                                          ),
                                         ),
-                                      ),
-                                      Expanded(
-                                          child: Divider(
-                                        color: const Color(0xFFE2E2E2),
-                                        thickness: 1.w,
-                                        height: 0,
-                                      )),
-                                    ],
+                                        Expanded(
+                                            child: Divider(
+                                          color: const Color(0xFFE2E2E2),
+                                          thickness: 1.w,
+                                          height: 0,
+                                        )),
+                                      ],
+                                    ),
+                                  ),
+                                  itemBuilder: (context, element) =>
+                                      messageItem(element.sender == Meet.user.loginId ? true : false, element),
+                                ),
+                                /*if(_isNewMessage)...[
+                            Positioned(child: Text("test"), bottom: 0, ),
+                          ]*/
+                              ],
+                            );
+                          } else {
+                            return const Center(
+                              child: Text("상대방에게 메시지를 보내보세요."),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Container(
+                      height: 70.h,
+                      color: Colors.white,
+                      padding: EdgeInsets.fromLTRB(Consts.marginPage, 0, Consts.marginPage, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: myEditingController,
+                              decoration: InputDecoration(
+                                hintText: '메세지를 입력하세요.',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(100.r),
+                                  borderSide: const BorderSide(
+                                    width: 0.1,
+                                    style: BorderStyle.none,
                                   ),
                                 ),
-                                itemBuilder: (context, element) =>
-                                    messageItem(element.sender == Meet.user.loginId ? true : false, element),
+                                contentPadding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 70.h / 2),
                               ),
-                              /*if(_isNewMessage)...[
-                          Positioned(child: Text("test"), bottom: 0, ),
-                        ]*/
-                            ],
-                          );
-                        } else {
-                          return const Center(
-                            child: Text("상대방에게 메시지를 보내보세요."),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Divider(color: const Color(0xFFE2E2E2), thickness: 1.w, height: 0),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Container(
-                    height: 70.h,
-                    color: Colors.white,
-                    padding: EdgeInsets.fromLTRB(Consts.marginPage, 0, Consts.marginPage, 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: myEditingController,
-                            decoration: InputDecoration(
-                              hintText: '메세지를 입력하세요.',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(100.r),
-                                borderSide: const BorderSide(
-                                  width: 0.1,
-                                  style: BorderStyle.none,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.fromLTRB(25.w, 0, 25.w, 70.h / 2),
                             ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            meetlog("메시지 전송");
+                          IconButton(
+                            onPressed: () {
+                              meetlog("메시지 전송");
 
-                            fireStore
-                                .collection("chat_collection")
-                                .doc(widget.arguments?['chatRoomId'].toString())
-                                .collection("messages")
-                                .add({
-                              'content': myEditingController.text,
-                              'createdTime': DateTime.now(),
-                              'sender': Meet.user.loginId,
-                              'readYn': "N",
-                            }).then((value) {
                               fireStore
                                   .collection("chat_collection")
                                   .doc(widget.arguments?['chatRoomId'].toString())
-                                  .update({
-                                'lastMessage': myEditingController.text,
-                                'lastUpdateTime': DateTime.now(),
+                                  .collection("messages")
+                                  .add({
+                                'content': myEditingController.text,
+                                'createdTime': DateTime.now(),
+                                'sender': Meet.user.loginId,
+                                'readYn': "N",
+                              }).then((value) {
+                                fireStore
+                                    .collection("chat_collection")
+                                    .doc(widget.arguments?['chatRoomId'].toString())
+                                    .update({
+                                  'lastMessage': myEditingController.text,
+                                  'lastUpdateTime': DateTime.now(),
+                                });
+                                myEditingController.text = "";
                               });
-                              myEditingController.text = "";
-                            });
-                          },
-                          icon: const Icon(Icons.send),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                            },
+                            icon: const Icon(Icons.send),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -259,7 +263,7 @@ Widget messageItem(bool isMine, MessageFireBase message) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (!isMine) ...[
-          Icon(Icons.account_circle_rounded, size: 80.r),
+          // Icon(Icons.account_circle_rounded, size: 80.r),
           SizedBox(
             width: 10.w,
           ),
@@ -293,7 +297,17 @@ Widget messageItem(bool isMine, MessageFireBase message) {
                     width: 10.w,
                   ),
                 ],
-                Container(
+                BubbleSpecialOne(
+                  text: message.content,
+                  isSender: isMine,
+                  color: isMine ? Colors.blueAccent.withOpacity(0.6) : Colors.grey.shade200,
+                  constraints: BoxConstraints(
+                    maxWidth: 350.w,
+                  ),
+                ),
+                // SpecialChatBubbleOne(color: Colors.cyanAccent, text: message.content, isSender: isMine, ),
+                // SpecialChatBubbleOne(color: Colors.greenAccent, text: message.content, isSender: isMine, ),
+                /*Container(
                   width: 350.w,
                   padding: EdgeInsets.all(10.r),
                   decoration: ShapeDecoration(
@@ -308,7 +322,7 @@ Widget messageItem(bool isMine, MessageFireBase message) {
                     style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.bold),
                     maxLines: 99,
                   ),
-                ),
+                ),*/
                 if (!isMine) ...[
                   SizedBox(
                     width: 10.w,

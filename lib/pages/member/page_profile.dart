@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../common/api.dart';
 import '../../common/common.dart';
@@ -25,8 +27,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late Member member;
 
+  String profileImgUri = "";
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController = TextEditingController();
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -96,7 +101,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                       shape: BoxShape.circle,
                                       color: Colors.grey.withOpacity(0.2),
                                     ),
-                                    child: Icon(Icons.people, size: 180.r),
+                                    child: profileImgUri == ""
+                                        ? Icon(Icons.people, size: 150.r)
+                                        : ClipOval(
+                                            child: Image.network(
+                                              profileImgUri,
+                                              width: 150.w,
+                                              height: 150.h,
+                                              fit: BoxFit.fill,
+                                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                return Icon(Icons.people, size: 150.r);
+                                              },
+                                            ),
+                                          ),
+                                    /*profileImgUri == ""
+                                        ? Icon(Icons.people, size: 150.r)
+                                        : Image.asset(profileImg(profileImgUri), width: 150.w, height: 150.h),*/
                                   ),
                                   Positioned(
                                     bottom: 0,
@@ -104,6 +124,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     child: InkWell(
                                       onTap: () async {
                                         meetlog("프로필 사진 변경");
+
+                                        await Permission.camera.request();
+
                                         if (await Meet.permissionPhotosRequest() == false) {
                                           return;
                                         }
@@ -111,6 +134,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                         final ImagePicker picker = ImagePicker();
                                         final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                                         if (image == null) return;
+
+                                        List<MultipartFile> imageList = [];
+                                        imageList.add(await MultipartFile.fromPath('profileImg', image.path));
+
+                                        await API.callWithAction(
+                                          URLS.updateProfileImage,
+                                          parameters: {
+                                            "loginId": Meet.user.loginId,
+                                          },
+                                          files: imageList,
+                                          onSuccess: (successData) {
+                                            meetlog("이미지 등록 완료");
+                                            setState(() {
+                                              profileImgUri = successData['data'] ?? "";
+                                            });
+                                          },
+                                          onFail: (errorData) {},
+                                        );
+
+                                        //
                                         setState(() {
                                           profileImageFile = null;
                                           // photo = "";
@@ -219,6 +262,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             child: TextField(
                               controller: _passwordController,
+                              obscureText: true,
                               autofocus: false,
                               canRequestFocus: true,
                               enabled: true,
@@ -232,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               textAlignVertical: TextAlignVertical.center,
                               decoration: InputDecoration(
-                                hintText: "비밀번호를 입력해 주세요.",
+                                hintText: "비밀번호 *",
                                 border: InputBorder.none,
                                 disabledBorder: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -253,6 +297,56 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           SizedBox(
+                            height: 10.h,
+                          ),
+                          Container(
+                            height: 90.h,
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                            ),
+                            child: TextField(
+                              controller: _passwordConfirmController,
+                              obscureText: true,
+                              autofocus: false,
+                              canRequestFocus: true,
+                              enabled: true,
+                              keyboardType: TextInputType.name,
+                              maxLength: 20,
+                              style: TextStyle(
+                                color: const Color(0xff222222),
+                                fontSize: 28.sp,
+                                fontWeight: FontWeight.w400,
+                                decorationThickness: 0,
+                              ),
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                hintText: "비밀번호 확인 *",
+                                border: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                counterText: "",
+                                hintStyle: TextStyle(
+                                  color: const Color(0xff999999),
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                isCollapsed: true,
+                              ),
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              onSubmitted: (value) {},
+                            ),
+                          ),
+                          /*SizedBox(
                             height: 30.h,
                           ),
                           Text(
@@ -366,8 +460,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ],
                             ),
-                          ),
-                          SizedBox(
+                          ),*/
+                          /*SizedBox(
                             height: 30.h,
                           ),
                           Text(
@@ -422,7 +516,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               },
                               onSubmitted: (value) {},
                             ),
-                          ),
+                          ),*/
                           SizedBox(
                             height: 30.h,
                           ),
@@ -505,6 +599,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
           _nameController.text = successData['data']['name'];
 
+          profileImgUri = successData['data']['imgUri'] ?? "";
+
           setState(() {});
           // Meet.alert(context, "알림", successData['message']);
         } else {
@@ -516,8 +612,15 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> updateMember() async {
-    if (_checkDuplicateName == false) {
+
+
+    /*if (_checkDuplicateName == false) {
       Meet.alert(context, "알림", "이름 중복확인을 해주세요.");
+      return;
+    }*/
+
+    if (_passwordController.text.isEmpty) {
+      Meet.alert(context, "알림", "비밀번호를 입력해주세요.");
       return;
     }
 

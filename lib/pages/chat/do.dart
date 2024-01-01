@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../common/common.dart';
+import '../../common/meet.dart';
 
 class User {
   String id = "";
@@ -74,6 +75,11 @@ class ChatFireBase {
 
   String useYn;
 
+  String? myName;
+  String? otherName;
+  String? myImage;
+  String? otherImage;
+
   ChatFireBase({
     required this.lastMessage,
     required this.lastUpdateTime,
@@ -83,11 +89,14 @@ class ChatFireBase {
     this.messages,
     this.chatRoomId,
     required this.useYn,
+    this.myName,
+    this.myImage,
+    this.otherName,
+    this.otherImage,
   });
 
   factory ChatFireBase.fromJson(Map<String, dynamic> json) {
     try {
-
       meetlog(json['messages'].toString());
 
       return ChatFireBase(
@@ -126,10 +135,27 @@ class ChatFireBase {
     final List<String> users = [];
     final userSnapshots = List<String>.from(snapshot['users'] as List);
 
-
+    String myName = "";
+    String otherName = "";
+    String myImage = "";
+    String otherImage = "";
 
     for (var e in userSnapshots) {
       users.add(e ?? "");
+      /*var future = FirebaseFirestore.instance.collection("user_collection").doc(e).get();
+      future.then((value) {
+        var result = value.data();
+        if(e.toString() == Meet.user.loginId){
+          myName = result?['name'] ?? "";
+          myImage = result?['profileImg'] ?? "";
+          // meetlog(myImage);
+        } else{
+          otherName = result?['name'] ?? "";
+          otherImage = result?['profileImg'] ?? "";
+          // meetlog(otherImage);
+        }
+
+      });*/
       // users.add(User.fromJson(e as Map<String, dynamic>));
     }
 
@@ -141,6 +167,10 @@ class ChatFireBase {
       users: users,
       chatRoomId: snapshot.id,
       useYn: snapshot['useYn'] ?? "",
+      myName: myName,
+      myImage: myImage,
+      otherName: otherName,
+      otherImage: otherImage,
     );
   }
 }
@@ -183,14 +213,56 @@ class MessageFireBase {
         'readYn': readYn,
       };
 
-
   factory MessageFireBase.fromSnapshot(DocumentSnapshot snapshot) {
-
     return MessageFireBase(
       content: snapshot['content'] ?? "",
       sender: snapshot['sender'] ?? "",
       createdTime: snapshot['createdTime'].toDate() ?? DateTime.now(),
       readYn: snapshot['readYn'] ?? "",
+    );
+  }
+}
+
+class Users{
+  String loginId = "";
+  String name = "";
+  String profileImg = "";
+
+  Users.empty();
+
+  Users({
+    required this.loginId,
+    required this.name,
+    required this.profileImg,
+  });
+
+  factory Users.fromJson(Map<String, dynamic> json) {
+    try {
+      return Users(
+        loginId: json['loginId'] ?? "",
+        name: json['name'] ?? "",
+        profileImg: json['profileImg'] ?? "",
+      );
+    } catch (e) {
+      return Users(
+        loginId: "",
+        name: "",
+        profileImg: "",
+      );
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+        'loginId': loginId,
+        'name': name,
+        'profileImg': profileImg,
+      };
+
+  factory Users.fromSnapshot(DocumentSnapshot snapshot) {
+    return Users(
+      loginId: snapshot['loginId'] ?? "",
+      name: snapshot['name'] ?? "",
+      profileImg: snapshot['profileImg'],
     );
   }
 }

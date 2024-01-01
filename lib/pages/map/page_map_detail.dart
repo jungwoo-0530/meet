@@ -87,7 +87,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
             generateMaker();
 
-            setTimer();
+            // setTimer();
 
             setState(() {
               _isLoading = false;
@@ -166,7 +166,7 @@ class _DetailMapPageState extends State<DetailMapPage> {
           ),
           InkWell(
             onTap: () {
-              meetlog("인상착의, 정보 모달창 열기");
+              meetlog("인상 착의, 정보 모달창 열기");
               Navigator.pushNamed(context, ROUTES.MAP_INFO, arguments: {
                 'locationId': locationDetail.locationId,
               });

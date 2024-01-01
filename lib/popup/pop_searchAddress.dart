@@ -229,23 +229,29 @@ class _SearchAddressPopupState extends State<SearchAddressPopup> {
   }
 
   Future<void> apiGetKakaoKeyword() async {
-    await API.callKaKaoApi(URLS.kakaoSearchKeyword, parameters: {'query': address}, onSuccess: (successData) {
-      if (successData['documents'].length > 0) {
-        successData['documents'].forEach(
-          (element) {
-            addressList.add(
-              Address(
-                roadAddress: element['address_name'] + " ," + element['place_name'],
-                jibunAddress: element['address_name'],
-                latitude: element['y'],
-                longitude: element['x'],
-              ),
-            );
-            setState(() {});
-          },
-        );
-      }
-      meetlog(successData.toString());
-    });
+    await API.callKaKaoApi(
+      URLS.kakaoSearchKeyword,
+      parameters: {
+        'query': address,
+      },
+      onSuccess: (successData) {
+        if (successData['documents'].length > 0) {
+          successData['documents'].forEach(
+            (element) {
+              addressList.add(
+                Address(
+                  roadAddress: element['address_name'] + " ," + element['place_name'],
+                  jibunAddress: element['address_name'],
+                  latitude: element['y'],
+                  longitude: element['x'],
+                ),
+              );
+              setState(() {});
+            },
+          );
+        }
+        meetlog(successData.toString());
+      },
+    );
   }
 }

@@ -73,7 +73,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: 100.w,
+                            width: 120.w,
                             child: Text(
                               "장소",
                               style: TextStyle(
@@ -106,6 +106,56 @@ class _InfoMapPageState extends State<InfoMapPage> {
                             ),
                           ),
                         ],
+                      ),
+                      Divider(
+                        color: const Color(0xFFE2E2E2),
+                        thickness: 1.w,
+                        height: 30.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 120.w,
+                            child: Text(
+                              "상세 위치",
+                              style: TextStyle(
+                                fontSize: 30.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: locationDetail?.destinationDetailAddress,
+                                          style: TextStyle(
+                                            fontSize: 30.sp,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15.h),
+                      Divider(
+                        color: const Color(0xFFE2E2E2),
+                        thickness: 1.w,
+                        height: 0,
                       ),
                       ExpansionTile(
                         title: Text(
@@ -146,7 +196,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myHat,
+                                              text: locationDetail!.myHat.isEmpty ? "-" : locationDetail?.myHat,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -186,7 +236,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myOuter,
+                                              text: locationDetail!.myOuter.isEmpty ? "-" : locationDetail?.myOuter,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -226,7 +276,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myTop,
+                                              text: locationDetail!.myTop.isEmpty ? "-" : locationDetail?.myTop,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -266,7 +316,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myBottom,
+                                              text: locationDetail!.myBottom.isEmpty ? "-" : locationDetail?.myBottom,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -306,7 +356,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myShoes,
+                                              text: locationDetail!.myShoes.isEmpty ? "-" : locationDetail?.myShoes,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -346,7 +396,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.myEtc,
+                                              text: locationDetail!.myEtc.isEmpty ? "-" : locationDetail?.myEtc,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -364,7 +414,12 @@ class _InfoMapPageState extends State<InfoMapPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 15.h),
+                      Divider(
+                        color: const Color(0xFFE2E2E2),
+                        thickness: 1.w,
+                        height: 0,
+                      ),
                       ExpansionTile(
                         title: Text(
                           "상대방 인상 착의",
@@ -404,7 +459,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherHat,
+                                              text: locationDetail!.otherHat.isEmpty ? "-" : locationDetail?.otherHat,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -444,7 +499,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherOuter,
+                                              text: locationDetail!.otherOuter.isEmpty ? "-" : locationDetail?.otherOuter,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -484,7 +539,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherTop,
+                                              text: locationDetail!.otherTop.isEmpty ? "-" : locationDetail?.otherTop,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -524,7 +579,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherBottom,
+                                              text: locationDetail!.otherBottom.isEmpty ? "-" : locationDetail?.otherBottom,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -564,7 +619,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherShoes,
+                                              text: locationDetail!.otherShoes.isEmpty ? "-" : locationDetail?.otherShoes,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -604,7 +659,7 @@ class _InfoMapPageState extends State<InfoMapPage> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: locationDetail?.otherEtc,
+                                              text: locationDetail!.otherEtc.isEmpty ? "-" : locationDetail?.otherEtc,
                                               style: TextStyle(
                                                 fontSize: 30.sp,
                                                 color: Colors.black,
@@ -655,6 +710,10 @@ class _InfoMapPageState extends State<InfoMapPage> {
     final TextEditingController shoesEditingController = TextEditingController();
     final TextEditingController etcEditingController = TextEditingController();
 
+    final TextEditingController addressDetailEditingController = TextEditingController();
+
+    addressDetailEditingController.text = locationDetail.destinationDetailAddress;
+
     hatEditingController.text = locationDetail.myHat;
     outerEditingController.text = locationDetail.myOuter;
     topEditingController.text = locationDetail.myTop;
@@ -671,418 +730,492 @@ class _InfoMapPageState extends State<InfoMapPage> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (BuildContext context, StateSetter bottomState) {
-          return SafeArea(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(24.w, 10.h, 24.w, 0),
-              child: Wrap(
-                spacing: 60.w,
-                children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "인상착의 수정",
-                      style: TextStyle(fontSize: 35.sp, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  ExpansionTile(
-                    title: Text(
-                      "나의 인상 착의",
-                      style: TextStyle(
-                        fontSize: 32.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    initiallyExpanded: true,
-                    collapsedTextColor: Colors.black,
-                    collapsedIconColor: Colors.black,
-                    iconColor: Colors.black,
-                    shape: const Border(),
-                    tilePadding: EdgeInsets.zero,
+          return GestureDetector(
+            onTap: (){
+              FocusScope.of(context).unfocus();
+            },
+            child: SafeArea(
+              child: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(24.w, 10.h, 24.w, 0),
+                  child: Wrap(
+                    spacing: 60.w,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(flex: 2, child: Text("모자")),
-                          Flexible(
-                            flex: 14,
-                            child: Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: hatEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "모자 종류, 색상",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
                       SizedBox(
-                        height: 16.h,
+                        height: 20.h,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(
-                            flex: 2,
-                            child: Text(
-                              "아우터",
-                            ),
-                          ),
-                          Flexible(
-                            flex: 14,
-                            fit: FlexFit.tight,
-                            child: Container(
-                              height: 90.h,
-                              width: double.infinity,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: outerEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "아우터 종류, 색상",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(flex: 2, child: Text("상의")),
-                          Flexible(
-                            flex: 14,
-                            child: Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: topEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "상의 종류, 색상",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(flex: 2, child: Text("하의")),
-                          Flexible(
-                            flex: 14,
-                            child: Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: bottomEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "하의 종류, 색상",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(flex: 2, child: Text("신발")),
-                          Flexible(
-                            flex: 14,
-                            child: Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: shoesEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "신발 종류, 색상",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Flexible(flex: 2, child: Text("기타")),
-                          Flexible(
-                            flex: 14,
-                            child: Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: etcEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "안경, 주얼리, 가방 등",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {},
-                                onSubmitted: (value) {},
-                              ),
-                            ),
-                          )
-                        ],
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "수정",
+                          style: TextStyle(fontSize: 35.sp, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       SizedBox(
                         height: 40.h,
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: MeetButton(
-                          radius: 32.r,
-                          height: 90.h,
-                          title: "확인",
-                          onPressed: () async {
-                            await API.callPostApi(
-                              URLS.updateLook,
-                              parameters: {
-                                'id': locationDetail.myLookId.toString(),
-                                'hat': hatEditingController.text,
-                                'outer': outerEditingController.text,
-                                'top': topEditingController.text,
-                                'bottom': bottomEditingController.text,
-                                'shoes': shoesEditingController.text,
-                                'etc': etcEditingController.text,
-                              },
-                              onSuccess: (successData) {
-                                Navigator.pop(context);
-                              },
-                              onFail: (failData) {
-                                Meet.alert(context, "알림", failData['message']);
-                              },
-                            );
-                          },
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "상세 위치",
+                          style: TextStyle(
+                            fontSize: 32.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Container(
+                        height: 90.h,
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.symmetric(horizontal: 30.w),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: addressDetailEditingController,
+                          autofocus: false,
+                          canRequestFocus: true,
+                          enabled: true,
+                          keyboardType: TextInputType.name,
+                          maxLength: 30,
+                          style: TextStyle(
+                            color: const Color(0xff222222),
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.w400,
+                            decorationThickness: 0,
+                          ),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            hintText: "만날 장소에 대한 자세한 내용을 적어주세요.",
+                            border: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            counterText: "",
+                            hintStyle: TextStyle(
+                              color: const Color(0xff999999),
+                              fontSize: 28.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            isCollapsed: true,
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                            });
+                          },
+                          onSubmitted: (value) {},
+                        ),
+                      ),
+                      ExpansionTile(
+                        title: Text(
+                          "나의 인상 착의",
+                          style: TextStyle(
+                            fontSize: 32.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        initiallyExpanded: true,
+                        collapsedTextColor: Colors.black,
+                        collapsedIconColor: Colors.black,
+                        iconColor: Colors.black,
+                        shape: const Border(),
+                        tilePadding: EdgeInsets.zero,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("모자")),
+                              Flexible(
+                                flex: 14,
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: hatEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "모자 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(
+                                flex: 2,
+                                child: Text(
+                                  "아우터",
+                                ),
+                              ),
+                              Flexible(
+                                flex: 14,
+                                fit: FlexFit.tight,
+                                child: Container(
+                                  height: 90.h,
+                                  width: double.infinity,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: outerEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "아우터 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("상의")),
+                              Flexible(
+                                flex: 14,
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: topEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "상의 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("하의")),
+                              Flexible(
+                                flex: 14,
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: bottomEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "하의 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("신발")),
+                              Flexible(
+                                flex: 14,
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: shoesEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "신발 종류, 색상",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16.h,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(flex: 2, child: Text("기타")),
+                              Flexible(
+                                flex: 14,
+                                child: Container(
+                                  height: 90.h,
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: etcEditingController,
+                                    autofocus: false,
+                                    canRequestFocus: true,
+                                    enabled: true,
+                                    keyboardType: TextInputType.name,
+                                    maxLength: 20,
+                                    style: TextStyle(
+                                      color: const Color(0xff222222),
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w400,
+                                      decorationThickness: 0,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "안경, 주얼리, 가방 등",
+                                      border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      counterText: "",
+                                      hintStyle: TextStyle(
+                                        color: const Color(0xff999999),
+                                        fontSize: 28.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isCollapsed: true,
+                                    ),
+                                    onChanged: (value) {},
+                                    onSubmitted: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 40.h,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: MeetButton(
+                              radius: 32.r,
+                              height: 90.h,
+                              title: "확인",
+                              onPressed: () async {
+                                await API.callPostApi(
+                                  URLS.updateLook,
+                                  parameters: {
+                                    'id': locationDetail.myLookId.toString(),
+                                    'hat': hatEditingController.text,
+                                    'outer': outerEditingController.text,
+                                    'top': topEditingController.text,
+                                    'bottom': bottomEditingController.text,
+                                    'shoes': shoesEditingController.text,
+                                    'etc': etcEditingController.text,
+                                    'locationId': locationDetail.locationId.toString(),
+                                    'destinationDetailAddress': addressDetailEditingController.text,
+                                  },
+                                  onSuccess: (successData) {
+                                    Meet.alert(context, "알림", "수정되었습니다.").then((value){
+                                      Navigator.pop(context);
+
+                                    });
+                                  },
+                                  onFail: (failData) {
+                                    Meet.alert(context, "알림", failData['message']);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           );

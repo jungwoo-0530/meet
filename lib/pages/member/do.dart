@@ -24,7 +24,7 @@ class Member {
         name: json['name'] ?? "",
         loginId: json['loginId'] ?? "",
         email: json['email'] ?? "",
-        profileImg: json['profileImg'] ?? "",
+        profileImg: json['imgUri'] ?? "",
         telephone: json['telephone'] ?? "",
       );
     } catch (e) {
