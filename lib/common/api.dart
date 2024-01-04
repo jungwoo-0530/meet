@@ -328,6 +328,7 @@ class API {
     try {
       // var request = http.Request('GET', uri);
 
+      var response = await http.get(uri, headers: {"Authorization": "KakaoAK 3b875900e9c2b3719e129d2bbe132e9f"});
 
       // var response = await request.send().timeout(Duration(seconds: Consts.timeoutNetwork));
       if (response.statusCode == 200) {

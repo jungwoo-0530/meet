@@ -48,44 +48,63 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: Column(
-                children: [
-                  Container(
-                      height: 400.h,
-                      padding: EdgeInsets.all(Consts.marginPage),
-                      color: Colors.grey,
-                      width: double.infinity,
-                      child: const Center(child: Text("프로필"))),
-                  SizedBox(
-                    height: 30.h,
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: Meet.user.loginId,
+                        style: TextStyle(
+                          fontSize: 34.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: "님 안녕하세요!",
+                      ),
+                    ],
+                    style: TextStyle(
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  Container(
-                    color: Colors.blue,
-                    height: 200.h,
-                    width: double.infinity,
-                    child: const Center(child: Text("공지")),
-                  ),
-                  /*SizedBox(
-                    height: 30.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, ROUTES.LOGIN);
-                    },
-                    child: const Text("로그인"),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, ROUTES.JOIN);
-                    },
-                    child: const Text("회원가입"),
-                  ),*/
-                ],
+                ),
+                /*Container(
+                  height: 400.h,
+                  padding: EdgeInsets.all(Consts.marginPage),
+                  color: Colors.grey,
+                  width: double.infinity,
+                  child: const Center(child: Text("프로필"))),
+              SizedBox(
+                height: 30.h,
               ),
+              Container(
+                color: Colors.blue,
+                height: 200.h,
+                width: double.infinity,
+                child: const Center(child: Text("공지")),
+              ),*/
+                /*SizedBox(
+                height: 30.h,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ROUTES.LOGIN);
+                },
+                child: const Text("로그인"),
+              ),
+              SizedBox(
+                height: 30.h,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ROUTES.JOIN);
+                },
+                child: const Text("회원가입"),
+              ),*/
+              ],
             ),
     );
   }
@@ -466,7 +485,10 @@ class _HomePageState extends State<HomePage> {
                               Position position =
                                   await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-                              latLng = LatLng(position.latitude, position.longitude);
+                              // latLng = LatLng(position.latitude, position.longitude);
+
+                              // 테스트 당산역
+                              latLng = const LatLng(37.533415, 126.902984);
 
                               await API.callKaKaoApi(
                                 URLS.kakaoReverseGeoCoding,

@@ -311,8 +311,10 @@ class AppMainState extends State<AppMain> with SingleTickerProviderStateMixin, W
 
     Meet.permissionLocationRequest();
 
+    //20초마다 내 위치 정보 업데이트
     Meet.meetTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
-      Meet.apiUpdateMyLocation();
+      //TODO : 테스트를 위해서 꺼놓음.
+      // Meet.apiUpdateMyLocation();
     });
 
     super.initState();

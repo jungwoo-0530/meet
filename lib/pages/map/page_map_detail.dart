@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ya_meet/common/common.dart';
 import 'package:ya_meet/custom/sub_appbar.dart';
@@ -81,13 +82,18 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
       apiGetMyPaths().then((value) {
         apiGetOtherLocation().then((value) {
-          apiGetOtherPaths().then((value) {
+          apiGetOtherPaths().then((value) async {
             // 냐의 위치
             location.getCurrentLocation();
 
             generateMaker();
 
             // setTimer();
+
+            // TODO: 테스트용 타이머 : s
+            setTimerTest();
+            // 테스트용 타이머 e
+
 
             setState(() {
               _isLoading = false;
@@ -109,7 +115,6 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO : title 수정
     return Scaffold(
       appBar: MeetSubAppBar(
         title: widget.arguments?['title'].toString(),
@@ -193,24 +198,134 @@ class _DetailMapPageState extends State<DetailMapPage> {
           // 4. poliline 그리기.
 
           myPaths.removeAt(0);
-          otherPaths.removeAt(0);
+          myPaths.removeAt(0);
+          myPaths.removeAt(0);
+          myPaths.removeAt(0);
+          // otherPaths.removeAt(0);
 
           // 1. 현재 내 위치 가져오기
           mySourceLocation = myPaths[0];
-          otherSourceLocation = otherPaths[0];
+          // otherSourceLocation = otherPaths[0];
+
+          LatLng myLocation = LatLng(mySourceLocation.latitude, mySourceLocation.longitude);
+
+          return;
+
+          await API.callPostApi(URLS.updateLocation, parameters: {
+            'myLoginId': Meet.user.loginId,
+            'ownerLatitude': myLocation.latitude.toString(),
+            'ownerLongitude': myLocation.longitude.toString(),
+          }, onSuccess: (json) async {
+            String otherLoginId =
+                locationDetail.ownerId == Meet.user.loginId ? locationDetail.otherId : locationDetail.ownerId;
+
+            await API.callGetApi(URLS.getOtherLocation, parameters: {
+              'locationId': locationDetail.locationId.toString(),
+              'otherLoginId': otherLoginId,
+            }, onSuccess: (successData) async {
+              if (successData['status'] == "200") {
+                setState(() {
+                  otherSourceLocation = LatLng(
+                      double.parse(successData['data']['latitude']), double.parse(successData['data']['longitude']));
+                });
+
+                await API.callNaverApi(
+                  URLS.naverDirection15,
+                  parameters: {
+                    'start': '${mySourceLocation.longitude},${mySourceLocation.latitude}',
+                    'goal': '${destination.longitude},${destination.latitude}'
+                  },
+                  onSuccess: (successData){
+                    if(successData['code'] == 0){
+                      myPaths = [];
+
+                      // myPaths.add(LatLng(mySourceLocation.latitude, mySourceLocation.longitude));
+
+                      Map<String, dynamic> result;
+                      result = successData['route'];
+                      List guideList = result['traoptimal'][0]['guide'] as List;
+
+                      List<int> pathIndex = [];
+                      for (var element in guideList) {
+                        var index = element['pointIndex'];
+                        pathIndex.add(index);
+                      }
+
+                      List trafast = successData['route']['traoptimal'];
+                      List tempPaths = trafast[0]['path'];
+                      for (int i = 0; i < tempPaths.length; i++) {
+                        // if (pathIndex.contains(i)) {
+                        myPaths.add(LatLng(tempPaths[i][1], tempPaths[i][0]));
+                        // }
+                      }
+
+                    }else if(successData['code'] == 1){
+                      Meet.alert(context, "알림", "도착");
+                    }
+
+                  },
+                ).then((value) async {
+                  await API.callNaverApi(
+                    URLS.naverDirection15,
+                    parameters: {
+                      'start': '${otherSourceLocation.longitude},${otherSourceLocation.latitude}',
+                      'goal': '${destination.longitude},${destination.latitude}'
+                    },
+                    onSuccess: (successData){
+                      {
+                        otherPaths = [];
+
+                        // otherPaths.add(LatLng(otherSourceLocation.latitude, otherSourceLocation.longitude));
+
+                        Map<String, dynamic> result;
+                        result = successData['route'];
+
+                        List guideList = result['traoptimal'][0]['guide'] as List;
+
+                        List<int> pathIndex = [];
+                        for (var element in guideList) {
+                          var index = element['pointIndex'];
+                          pathIndex.add(index);
+                        }
+
+                        List tempPaths = successData['route']['traoptimal'][0]['path'];
+                        for (int i = 0; i < tempPaths.length; i++) {
+                          // if (pathIndex.contains(i)) {
+                          otherPaths.add(LatLng(tempPaths[i][1], tempPaths[i][0]));
+                          // }
+                        }
+                      }
+                    },
+                  ).then((value){
+                    polyLines = {};
+                    polyLineIdx = 0;
+
+                    initPolyline(Colors.lightBlue, myPaths);
+                    initPolyline(Colors.red, otherPaths);
+
+                    generateMaker();
+                    setState(() {
+
+                    });
+                  });
+                });
+              }
+            }, onFail: (failData) {
+              Meet.alert(context, "알림", "에러");
+            });
+          });
 
           // 3. 새로운 경로 가져오기
-          polyLines = {};
+          /*polyLines = {};
           polyLineIdx = 0;
 
           initPolyline(Colors.lightBlue, myPaths);
-          initPolyline(Colors.red, otherPaths);
-
-          generateMaker();
+          // initPolyline(Colors.red, otherPaths);
+*/
+          // generateMaker();
 
           setState(() {});
         },
-
         child: const Icon(Icons.refresh),
       ),
       body: SafeArea(
@@ -372,10 +487,10 @@ class _DetailMapPageState extends State<DetailMapPage> {
           setState(() {
             locationDetail = LocationDetail.fromJson(successData['data']);
 
-            mySourceLocation =
-                LatLng(double.parse(successData['data']['currentMyLatitude']), double.parse(successData['data']['currentMyLongitude']));
-            otherSourceLocation =
-                LatLng(double.parse(successData['data']['currentOtherLatitude']), double.parse(successData['data']['currentOtherLongitude']));
+            mySourceLocation = LatLng(double.parse(successData['data']['currentMyLatitude']),
+                double.parse(successData['data']['currentMyLongitude']));
+            otherSourceLocation = LatLng(double.parse(successData['data']['currentOtherLatitude']),
+                double.parse(successData['data']['currentOtherLongitude']));
             if (locationDetail.ownerId == Meet.user.loginId) {
               meetlog("내 위치");
               myFirstLocation =
@@ -447,17 +562,11 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
         generateMaker();
 
-        /*// 마커들 초기화
-        markers = {};
-        for (var i = 0; i < markerList.length; i++) {
-          markers.add(//repopulate markers
-              markerList[i]["marker"]);
-        }*/
         // refresh
         setState(() {});
 
-        // 내 위치 업데이트
-        // apiUpdateMyLocation();
+        // TODO: 테스트용 내 위치 업데이트
+        apiTestUpdateMyLocation();
       });
     });
     //e: 마커 초기화, 마커 타이머
@@ -468,8 +577,6 @@ class _DetailMapPageState extends State<DetailMapPage> {
 
       polyLines = {};
       polyLineIdx = 0;
-      // myPaths = [];
-      // otherPaths = [];
 
       apiGetMyPaths().then((value) {
         apiGetOtherPaths().then((value) {
@@ -541,4 +648,80 @@ class _DetailMapPageState extends State<DetailMapPage> {
       },
     );
   }
+
+
+  // 테스트 용들
+  Future<void> apiTestUpdateMyLocation() async {
+    LatLng myLocation = LatLng(myPaths[myTestPathIdx].latitude, myPaths[myTestPathIdx].longitude);
+
+    await API.callPostApi(
+      URLS.updateLocation,
+      parameters: {
+        'myLoginId': Meet.user.loginId,
+        'ownerLatitude': myLocation.latitude.toString(),
+        'ownerLongitude': myLocation.longitude.toString(),
+      },
+      onSuccess: (json) {
+        //meetlog(json.toString());
+      },
+    );
+  }
+  void setTimerTest() {
+    // 3 초마다 현재 위치를 가져와서 마커를 이동시킨다.
+    markerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      // 상대방 위치
+      apiGetOtherLocation().then((value) {
+
+        int index = markerList.indexWhere((item) => item["id"] == "me");
+
+        markerList[index] = {
+          "id": "me",
+          "marker": Marker(
+              markerId: const MarkerId("me"),
+              position: LatLng(mySourceLocation.latitude, location.longitude), //move to new location
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue))
+        };
+        //e: 내위치
+
+        generateMaker();
+
+        apiTestUpdateMyLocation();
+      });
+    });
+    //e: 마커 초기화, 마커 타이머
+
+    //s: 폴리라인 타이머
+    polyLineTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      meetlog("폴리라인 타이머");
+
+      polyLines = {};
+      polyLineIdx = 0;
+
+      initPolyline(Colors.lightBlue, myPaths);
+
+      int index = 0;
+      for(int i = 0; i < otherPaths.length; i++){
+
+        if(otherPaths[i] == otherSourceLocation){
+          index = i;
+          meetlog(i.toString());
+          break;
+        }
+      }
+
+      if(index != 0){
+        for(int i = 0; i < index; i++){
+          otherPaths.removeAt(0);
+        }
+      }
+
+      initPolyline(Colors.red, otherPaths);
+
+      setState(() {
+
+      });
+    });
+    //e: 폴리라인 타이머
+  }
+
 }

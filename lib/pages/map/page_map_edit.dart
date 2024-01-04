@@ -37,12 +37,14 @@ class _EditMapPageState extends State<EditMapPage> {
   final TextEditingController etcEditingController = TextEditingController();
   final TextEditingController detailLocationEditingController = TextEditingController();
 
-  String phoneNumber = "";
+  // String phoneNumber = "";
   String destinationAddress = "";
   late LatLng destinationLatLng;
 
   String myAddress = "";
   late LatLng myLatLng;
+
+  bool checkOtherUser = false;
 
   @override
   void initState() {
@@ -60,7 +62,7 @@ class _EditMapPageState extends State<EditMapPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
@@ -164,52 +166,113 @@ class _EditMapPageState extends State<EditMapPage> {
                             SizedBox(
                               height: 16.h,
                             ),
-                            Container(
-                              height: 90.h,
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.symmetric(horizontal: 30.w),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: TextField(
-                                controller: otherLoginIdEditingController,
-                                autofocus: false,
-                                canRequestFocus: true,
-                                enabled: true,
-                                keyboardType: TextInputType.name,
-                                maxLength: 20,
-                                style: TextStyle(
-                                  color: const Color(0xff222222),
-                                  fontSize: 28.sp,
-                                  fontWeight: FontWeight.w400,
-                                  decorationThickness: 0,
-                                ),
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: InputDecoration(
-                                  hintText: "상대방 아이디 *",
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  counterText: "",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xff999999),
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w400,
+                            SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    fit: FlexFit.tight,
+                                    child: Container(
+                                      height: 90.h,
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                      decoration: ShapeDecoration(
+                                        color: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
+                                          borderRadius: BorderRadius.circular(16.r),
+                                        ),
+                                      ),
+                                      child: TextField(
+                                        controller: otherLoginIdEditingController,
+                                        autofocus: false,
+                                        canRequestFocus: true,
+                                        enabled: true,
+                                        keyboardType: TextInputType.name,
+                                        maxLength: 20,
+                                        style: TextStyle(
+                                          color: const Color(0xff222222),
+                                          fontSize: 28.sp,
+                                          fontWeight: FontWeight.w400,
+                                          decorationThickness: 0,
+                                        ),
+                                        textAlignVertical: TextAlignVertical.center,
+                                        decoration: InputDecoration(
+                                          hintText: "상대방 아이디 *",
+                                          border: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          counterText: "",
+                                          hintStyle: TextStyle(
+                                            color: const Color(0xff999999),
+                                            fontSize: 28.sp,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          isCollapsed: true,
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            checkOtherUser = false;
+                                            // phoneNumber = value;
+                                          });
+                                        },
+                                        onSubmitted: (value) {},
+                                      ),
+                                    ),
                                   ),
-                                  isCollapsed: true,
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    phoneNumber = value;
-                                  });
-                                },
-                                onSubmitted: (value) {},
+                                  SizedBox(
+                                    width: 16.w,
+                                  ),
+                                  Flexible(
+                                    flex: 2,
+                                    fit: FlexFit.tight,
+                                    child: MeetButton(
+                                      onPressed: () async {
+                                        if (otherLoginIdEditingController.text.isEmpty) {
+                                          Meet.alert(context, "알림", "아이디를 입력해 주세요.");
+                                          return;
+                                        }
+
+                                        if (otherLoginIdEditingController.text == Meet.user.loginId) {
+                                          Meet.alert(context, "알림", "본인 아이디를 입력할 수 없습니다.");
+                                          return;
+                                        }
+
+                                        await API.callPostApi(
+                                          URLS.checkLoginId,
+                                          parameters: {
+                                            "loginId": otherLoginIdEditingController.text,
+                                          },
+                                          onSuccess: (successData) {
+                                            if (successData['status'] == "200") {
+                                              Meet.alert(context, '알림', '존재하지 않는 유저입니다.');
+                                              setState(() {
+                                                checkOtherUser = false;
+                                              });
+                                            } else if (successData['status'] == "204") {
+                                              Meet.alert(context, '알림', '존재하는 유저입니다.');
+                                              setState(() {
+                                                checkOtherUser = true;
+                                              });
+                                            } else {
+                                              Meet.alert(context, '알림', successData['message']);
+                                            }
+                                          },
+                                          onFail: (failData) {
+                                            Meet.alert(context, '알림', failData['message']);
+                                          },
+                                        );
+                                      },
+                                      title: "유저 확인",
+                                      height: 90.h,
+                                      width: double.infinity,
+                                      radius: 10.r,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(
@@ -335,8 +398,7 @@ class _EditMapPageState extends State<EditMapPage> {
                                   isCollapsed: true,
                                 ),
                                 onChanged: (value) {
-                                  setState(() {
-                                  });
+                                  setState(() {});
                                 },
                                 onSubmitted: (value) {},
                               ),
@@ -706,7 +768,10 @@ class _EditMapPageState extends State<EditMapPage> {
                         radius: 32.r,
                         height: 90.h,
                         title: "등록",
-                        enabled: destinationAddress.isNotEmpty,
+                        enabled: destinationAddress.isNotEmpty &&
+                            myAddress.isNotEmpty &&
+                            otherLoginIdEditingController.text.isNotEmpty &&
+                            checkOtherUser,
                         onPressed: () {
                           apiAddMap();
                         },
@@ -720,7 +785,6 @@ class _EditMapPageState extends State<EditMapPage> {
   }
 
   Future<void> apiAddress() async {
-
     await API.callKaKaoApi(
       URLS.kakaoReverseGeoCoding,
       parameters: {
@@ -732,14 +796,12 @@ class _EditMapPageState extends State<EditMapPage> {
         if (successData['meta']['total_count'] > 0) {
           meetlog(successData['documents'][0]['address']['address_name']);
           myAddress = successData['documents'][0]['address']['address_name'];
-          myAddressEditingController.text= myAddress;
+          myAddressEditingController.text = myAddress;
         } else {
           Meet.alert(context, "알림", "해당 위치에 일치하는 주소가 없습니다.");
           meetlog("해당 좌표에 일치하는 주소가 없습니다.");
         }
-        setState(() {
-
-        });
+        setState(() {});
       },
       onFail: (failData) {
         Meet.alert(context, "알림", "서버 에러");
@@ -770,7 +832,11 @@ class _EditMapPageState extends State<EditMapPage> {
   Future<void> getLocationData() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    myLatLng = LatLng(position.latitude, position.longitude);
+    // 테스트용
+    // 합정역
+    myLatLng = const LatLng(37.54938, 126.913692);
+    
+    // myLatLng = LatLng(position.latitude, position.longitude);
     meetlog(position.latitude.toString());
     meetlog(position.longitude.toString());
   }
@@ -788,6 +854,11 @@ class _EditMapPageState extends State<EditMapPage> {
 
     if (otherLoginIdEditingController.text.isEmpty) {
       Meet.alert(context, "알림", "상대방 아이디를 입력해주세요.");
+      return;
+    }
+
+    if (!checkOtherUser) {
+      Meet.alert(context, "알림", "상대방 아이디를 확인해주세요.");
       return;
     }
 
